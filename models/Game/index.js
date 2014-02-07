@@ -5,11 +5,12 @@
 
 var mongoose = require('mongoose-q')(require('mongoose')),
   Q = require('q'),
-  _ = require('underscore');
+  _ = require('underscore'),
+  winston = require('winston');
 
 var validateHelp = require('./validateHelper'),
   instanceMethodsHelp = require('./instanceMethodsHelper'),
-  winston = require('winston');
+  stateChangeHelp = require('./stateChanges/index');
 
 var GameSchema = new mongoose.Schema({
   //// IDENTIFICATION ////
@@ -62,51 +63,9 @@ validateHelp.addValidators(GameSchema);
  * Methods
  */
 GameSchema.methods = {
-  joinGameQ : function (player) {
-    var that = this;
-    return Q.promise(function (resolve, reject) {
-      //valid user?
-      if (!player || !player._id){//TODO lazy, didnt check db
-        return reject('invalid player');
-      }
+  joinGameQ : instanceMethodsHelp.joinGameQCallback(),
 
-      //are we full?
-      if (that.full){
-        return reject('Game Full');
-      }
-
-      //is the player in this Game already?
-      if (that.getPlayerPosition(player._id) !== -1) {
-        return reject('Player is already in Game');
-      }
-
-      //make object
-      var newPlayerGameInfo = { //aka piggie
-        "playerID" : player._id,
-        "playerStatus" : 'inGame'
-      };
-
-      var position = that.getNextPlayerPosition();
-      //that.players['p1'] = newPlayerGameInfo; // WHY DOESN'T THIS WORK
-
-      var playersCopy = _.clone(that.players); //ugly fix
-      playersCopy[position] = newPlayerGameInfo;
-      that.players = playersCopy;
-
-    /*  that.players = { //works
-        'p1' : newPlayerGameInfo
-      };*/
-
-      //update db
-      that.saveQ()
-        .then(function (result) {
-          winston.info('player[' + player.username + '|' + player._id + '] added to game: ' + result._id + ' [' + result.playersCount + '/' + result.maxPlayers + ']');
-          resolve(result);
-        })
-        .fail(reject)
-        .done();
-    });
-  },
+  changeStateQ : stateChangeHelp.changeStateQCallback(),
 
   //simple for now, but later it should adapt when people 'leave' a game before it starts
   getNextPlayerPosition : function () {

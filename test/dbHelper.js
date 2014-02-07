@@ -15,7 +15,6 @@ var Game = require('../models/Game/index'),
 
 
 exports.clearUsersAndGamesCollectionQ = function () {
-console.log('loz')
   return Q.all([User.removeQ({}), Game.removeQ({})]);
 };
 exports.clearUsersAndGamesCollection = function (done) {

@@ -25,19 +25,15 @@ describe('Models: ', function () {
       var ourUserParams = {username : "joe", password : "blow"};
       var ourGameParams = validParams.validGameParams[0];
       ourGameParams.dontJoinCreator = true;
-console.log('lol.')
       //clear databases TODO this could be prettier
       dbHelper.clearUsersAndGamesCollectionQ()
         .done(function () {
-console.log('lol')
           dbHelper.addUserQ(ourUserParams)
             .done(function (user) {
-console.log('lol2')
               should(user._id).ok;
               ourPlayer = user;
               dbHelper.addGameQ(ourGameParams)
                 .done(function (game) {
-console.log('lol3')
                   var ourGameID = game._id;
                   Game.findByIdQ(ourGameID)
                     .done(function (game) {
