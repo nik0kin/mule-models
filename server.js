@@ -4,5 +4,6 @@ var config = {
     db: 'mongodb://localhost/mule_test',
   };
 
-mongoose.connect(config.db);
+if (!mongoose.connection.readyState)
+  mongoose.connect(config.db);
 
