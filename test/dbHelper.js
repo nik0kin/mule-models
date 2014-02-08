@@ -9,9 +9,7 @@ var Q = require('q');
 require ('../server.js');
 
 var Game = require('../models/Game/index'),
- // gamesHelper = require('../app/controllers/games/crud/helper'),
   User = require('../models/User');
-  //users = require('../app/controllers/users/crud/helper');
 
 
 exports.clearUsersAndGamesCollectionQ = function () {
@@ -32,7 +30,7 @@ exports.addUserQ = function (userParameters) {
 };
 
 exports.getUserQ = function (userID) {
-  return User.findByIdQ(gameID);
+  return User.findByIdQ(userID);
 };
 
 

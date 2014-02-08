@@ -13,7 +13,7 @@ var app = require('../../server');
 var Game = require('../../models/Game/index'),
   User = require('../../models/User'),
   dbHelper = require('../dbHelper'),
-  testHelper = require('../mochaHelper'),
+  testHelper = require('mule-utils/lib/testUtils/mochaHelper'),
   validParams = require('../validParams/gameConfig');
 
 describe('Models: ', function () {
