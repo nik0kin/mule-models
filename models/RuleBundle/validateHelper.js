@@ -48,10 +48,18 @@ var validateGameSettings = function (gameSettingsObject) { //TODO refactor this
   var playerLimit = gameSettingsObject.playerLimit;
   var customBoardSettings = gameSettingsObject.customBoardSettings;
 
+  var badValue = false;
   if (_.isNumber(playerLimit)
     && playerLimit > 1
     && playerLimit <= MAX_PLAYERS_PER_GAME) {
 
+  } else if (_.isArray(playerLimit)) {
+    _.each(playerLimit, function (value) {
+      if (!_.isNumber(value)){
+        console.log('bad value')
+        badValue = true;
+      }
+    });
   } else if (_.isObject(playerLimit)
     && validateMinMaxObject(gameSettingsObject.playerLimit)) {
 
@@ -61,13 +69,21 @@ var validateGameSettings = function (gameSettingsObject) { //TODO refactor this
 
   var badSetting = false;
   _.each(customBoardSettings, function (value, key) {
-    if (!validateMinMaxObject(value)){
+    if (_.isArray(value)) {
+      _.each(value, function (arrayValue) {
+        if (!_.isNumber(arrayValue)){
+          console.log('bad value')
+          badSetting = true;
+        }
+      });
+    } else if (!validateMinMaxObject(value)){
       console.log('bad setting ' + key + ": " + value)
       badSetting = true;
     }
   });
 
-  return !badSetting;
+
+  return !badSetting && !badValue;
 };
 
 var validateMinMaxObject = function (object) {
