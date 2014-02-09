@@ -1,6 +1,6 @@
 {
   "name": "mule-models",
-  "version": "0.1.1",
+  "version": "0.1.7",
   "description": "Mongoose Models for ProjectMule",
   "main": "index.js",
   "directories": {

@@ -1,5 +1,5 @@
 /**
- * app/models/Game/validateHelper.js
+ * Models->Game-> validateHelper.js
  *
  * Created by niko on 1/28/14.
  */

@@ -1,0 +1,22 @@
+{
+  "name" : "Checkers",
+  "turnSubmitStyle" : "roundRobin",
+
+  "staticBoardSettings" : {
+    "boardStyle" : "squareGrid"
+  },
+
+  "gameSettings" : {
+    "playerLimit" : 2,
+    "customBoardSettings" : {
+      "size" : {
+        "min" : 8,
+        "max" : 10
+      }
+    }
+  },
+
+  "rules" : {
+
+  }
+}

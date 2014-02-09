@@ -21,7 +21,7 @@ var GameSchema = new mongoose.Schema({
   // RuleBundle
   // turn??? - round robin vs async..
   turnStyle : {type : String, default : 'default'},
-  maxPlayers : { type: Number, default: 0 },   //TODO rename this
+  maxPlayers : { type: Number, default: 0 },
 
   //// GAME INFO ////
   gameStatus: {type: String, default: 'open'},

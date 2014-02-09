@@ -1,0 +1,29 @@
+{
+  "name" : "Vikings",
+  "turnSubmitStyle" : "playByMail",
+
+  "staticBoardSettings" : {
+    "boardStyle" : "hexGrid"
+  },
+
+  "gameSettings" : {
+    "playerLimit" : {
+      "min" : 2,
+      "max" : 10
+    },
+    "customBoardSettings" : {
+      "width" : {
+        "min" : 1,
+        "max" : 500
+      },
+      "height" : {
+        "min" : 1,
+        "max" : 500
+      }
+    }
+  },
+
+  "rules" : {
+
+  }
+}
