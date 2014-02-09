@@ -9,10 +9,7 @@
   "gameSettings" : {
     "playerLimit" : 2,
     "customBoardSettings" : {
-      "size" : {
-        "min" : 8,
-        "max" : 10
-      }
+      "size" : [8, 10]
     }
   },
 
