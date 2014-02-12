@@ -11,9 +11,6 @@ describe('dbHelper: ', function () {
   var validCreateGamesBody = {
     "name": "fun game 3v3",
     "maxPlayers" : 6,
-    "width" : 40,
-    "height" : 40,
-    "fog" : 'false',
     "turnStyle" : "realtime"
   };
 
@@ -34,8 +31,7 @@ describe('dbHelper: ', function () {
 
   it('addGameQ should work', function (done){
     dbHelper.addGameQ(validCreateGamesBody)
-      .done(function (user) {
-        ourPlayerID = user._id;
+      .done(function (game) {
         done()
       }, function (err) {
         done(err);

@@ -1,9 +1,4 @@
-var mongoose = require('mongoose-q')(require('mongoose'));
+require('mule-utils/mongooseUtils');
 
-var config = {
-    db: 'mongodb://localhost/mule_test',
-  };
-
-if (!mongoose.connection.readyState)
-  mongoose.connect(config.db);
+var mongoose = global.getMongoose();
 

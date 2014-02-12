@@ -8,8 +8,8 @@ var Q = require('q');
 
 require ('../server.js');
 
-var Game = require('../models/Game/index'),
-  User = require('../models/User');
+var Game = require('../models/Game/index').Model,
+  User = require('../models/User').Model;
 
 
 exports.clearUsersAndGamesCollectionQ = function () {

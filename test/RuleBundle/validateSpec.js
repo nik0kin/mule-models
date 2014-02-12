@@ -10,13 +10,14 @@ var should = require('should'),
 
 var dbHelper = require('../dbHelper'),
   testHelper = require('mule-utils/lib/testUtils/mochaHelper'),
-  RuleBundleModel = require('../../models/RuleBundle/index');
+  RuleBundleModel = require('../../models/RuleBundle/index').Model;
 
 require.extensions[".json"] = function (m) {
   m.exports = JSON.parse(fs.readFileSync(m.filename));
 };
 
 var checkersRuleBundleJSON = require('../../bundles/checkers.json'),
+  backgammonRuleBundleJSON = require('../../bundles/backgammon.json'),
   vikingsRuleBundleJSON = require('../../bundles/vikings.json');
 
 
@@ -30,6 +31,19 @@ describe('Models: ', function () {
         newRuleBundle.saveQ()
           .done(function (result) {
             _.each(checkersRuleBundleJSON, function (value, key) {
+              should(result[key]).ok;
+              should(result[key]).eql(value);
+            });
+
+            done();
+          }, testHelper.mochaError(done));
+      });
+
+      it('should work with backgammon', function (done) {
+        var newRuleBundle = new RuleBundleModel(backgammonRuleBundleJSON);
+        newRuleBundle.saveQ()
+          .done(function (result) {
+            _.each(backgammonRuleBundleJSON, function (value, key) {
               should(result[key]).ok;
               should(result[key]).eql(value);
             });

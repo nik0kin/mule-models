@@ -4,7 +4,7 @@
  * Created by niko on 2/9/14.
  */
 
-var mongoose = require('mongoose-q')(require('mongoose'));
+var mongoose = global.getMongoose();
 
 var validateHelp = require('./validateHelper'),
   instanceMethodsHelp = require('./methods/index');
@@ -52,4 +52,5 @@ RuleBundleSchema.methods = {
   //joinGameQ : instanceMethodsHelp.joinGameQCallback()
 };
 
-module.exports = mongoose.model('RuleBundle', RuleBundleSchema);
+exports.Schema = RuleBundleSchema;
+exports.Model = mongoose.model('RuleBundle', RuleBundleSchema);

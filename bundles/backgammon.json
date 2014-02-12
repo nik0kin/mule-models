@@ -1,0 +1,18 @@
+{
+  "name" : "Backgammon",
+  "turnSubmitStyle" : "roundRobin",
+
+  "staticBoardSettings" : {
+    "boardStyle" : "linear"
+  },
+
+  "gameSettings" : {
+    "playerLimit" : 2,
+    "customBoardSettings" : {
+    }
+  },
+
+  "rules" : {
+
+  }
+}

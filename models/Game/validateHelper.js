@@ -6,23 +6,19 @@
 var _ = require('underscore');
 
 var gameStatusUtils = require('mule-utils/gameStatusUtils'),
-  playerGameStatusUtils = require('mule-utils/playerGameStatusUtils');
+  playerGameStatusUtils = require('mule-utils/playerGameStatusUtils'),
+  RuleBundle = require('../RuleBundle/index').Model;
 
 exports.addValidators = function (GameSchema) {
   GameSchema.path('name').validate(validateNameLength, '\'name\' length must be within the range 1 - 30')
-  GameSchema.path('width').validate(exports.validateWidthAndHeight, 'width must be within the range: 1 - 500');
-  GameSchema.path('height').validate(exports.validateWidthAndHeight, 'height must be within the range: 1 - 500');
   GameSchema.path('gameStatus').validate(gameStatusUtils.validateGameStatus, 'gameStatus must equal one of the following: open, inProgress, or finished');
   GameSchema.path('maxPlayers').validate(validateNumberOfPlayers, 'maxPlayers must be within the range: 2 - 10');
   GameSchema.path('players').validate(validateGamePlayersObject, 'game->players object became invalid..');
+  GameSchema.path('ruleBundle').validate(validateRuleBundleID, 'invalid ruleBundle ID');
 };
 
 var validateNameLength = function (nameStr) {
   return _.isString(nameStr) && nameStr.length > 0 && nameStr.length <= 30;
-};
-
-exports.validateWidthAndHeight = function (number) {
-  return _.isNumber(number) && number > 0 && number <= 500;
 };
 
 var validateNumberOfPlayers = function (number) {
@@ -44,4 +40,12 @@ var validateGamePlayersObject = function (players) {
     }
   });
   return allGood;
+};
+
+//TODO this doeesnt run here.. because type is ObjectID?
+var validateRuleBundleID = function (ruleBundleID) {
+  console.log('validateing');
+ // console.log(RuleBundle.findById(ruleBundleID));
+return true;
+   //return RuleBundle.findById(ruleBundleID);
 };

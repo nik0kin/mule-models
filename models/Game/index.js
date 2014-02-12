@@ -3,40 +3,39 @@
  *
  */
 
-var mongoose = require('mongoose-q')(require('mongoose')),
+var mongoose = global.getMongoose(),
+  Schema = mongoose.Schema,
   Q = require('q'),
   _ = require('underscore'),
   winston = require('winston');
 
 var validateHelp = require('./validateHelper'),
   instanceMethodsHelp = require('./instanceMethodsHelper'),
-  stateChangeHelp = require('./stateChanges/index');
+  stateChangeHelp = require('./stateChanges/index'),
+  RuleBundleSchema = require('../RuleBundle/index').Schema;
 
-var GameSchema = new mongoose.Schema({
+var GameSchema = new Schema({
   //// IDENTIFICATION ////
   id: { type: Number, index: true },
   name : {type: String, default: "Unnamed Game"},
 
   //// HIGH LEVEL SETTINGS ////
-  // RuleBundle
-  // turn??? - round robin vs async..
   turnStyle : {type : String, default : 'default'},
+  turnTimer : {type : String, default : 'default'},
+
   maxPlayers : { type: Number, default: 0 },
+  ruleBundle : Schema.Types.ObjectId ,
 
   //// GAME INFO ////
   gameStatus: {type: String, default: 'open'},
   turnNumber: {type: Number, default: 0},        //open, inprogress, finished
-  players : {type : mongoose.Schema.Types.Mixed, default : {} },
-
-  //// MAP INFO ////
-  // dependant on RuleBundle (will be moved soon)
-  width : {type: Number, default: 1},
-  height : {type: Number, default: 1},
-  //map: {type: null },
+  players : {type : Schema.Types.Mixed, default : {} },
 
   //// SETTINGS ////
-  // etc settings dependant on rule bundle
-  fog : {type: String, default: 'default'},
+  ruleBundleGameSettings : {
+    type : Schema.Types.Mixed,
+    customBoardSettings : {type : Schema.Types.Mixed }
+  },
 
   //// ETC ////
   currentLocalIDCounter: {type: Number, default: 0} //counter for id's of all units of the game
@@ -86,4 +85,5 @@ GameSchema.methods = {
   }
 };
 
-module.exports = mongoose.model('Game', GameSchema);
+exports.Schema = GameSchema;
+exports.Model = mongoose.model('Game', GameSchema);

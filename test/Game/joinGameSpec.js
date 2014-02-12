@@ -10,8 +10,8 @@ var Q = require('q'),
 
 var app = require('../../server');
 
-var Game = require('../../models/Game/index'),
-  User = require('../../models/User'),
+var Game = require('../../models/Game/index').Model,
+  User = require('../../models/User').Model,
   dbHelper = require('../dbHelper'),
   testHelper = require('mule-utils/lib/testUtils/mochaHelper'),
   validParams = require('../validParams/gameConfig');
