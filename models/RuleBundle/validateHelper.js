@@ -6,6 +6,7 @@
 
 var _ = require('underscore');
 
+var MIN_PLAYERS_PER_GAME = 1;
 var MAX_PLAYERS_PER_GAME = 100;
 
 exports.addValidators = function (GameSchema) {
@@ -49,13 +50,13 @@ var validateGameSettings = function (gameSettingsObject) { //TODO refactor this
   var customBoardSettings = gameSettingsObject.customBoardSettings;
 
   var badValue = false;
-  if (_.isNumber(playerLimit)
-    && playerLimit > 1
+  if (isInt(playerLimit)
+    && playerLimit > MIN_PLAYERS_PER_GAME
     && playerLimit <= MAX_PLAYERS_PER_GAME) {
 
   } else if (_.isArray(playerLimit)) {
     _.each(playerLimit, function (value) {
-      if (!_.isNumber(value)){
+      if (!isInt(value)){
         console.log('bad value')
         badValue = true;
       }
@@ -71,7 +72,7 @@ var validateGameSettings = function (gameSettingsObject) { //TODO refactor this
   _.each(customBoardSettings, function (value, key) {
     if (_.isArray(value)) {
       _.each(value, function (arrayValue) {
-        if (!_.isNumber(arrayValue)){
+        if (!isInt(arrayValue)){
           console.log('bad value')
           badSetting = true;
         }
@@ -87,5 +88,9 @@ var validateGameSettings = function (gameSettingsObject) { //TODO refactor this
 };
 
 var validateMinMaxObject = function (object) {
-  return object && _.isNumber(object.min) && _.isNumber(object.max) && (object.max > object.min);
+  return object && isInt(object.min) && isInt(object.max) && (object.max > object.min);
 };
+
+var isInt = function (n) {
+  return _.isNumber(n) && n % 1 === 0;
+}
