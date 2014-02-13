@@ -42,13 +42,20 @@ var validateStaticBoardSettings = function (staticBoardSettingsObject) {
   return false;
 };
 
-var validateGameSettings = function (gameSettingsObject) { //TODO refactor this
+var validateGameSettings = function (gameSettingsObject) {
   if (!gameSettingsObject || !gameSettingsObject.playerLimit || !gameSettingsObject.customBoardSettings)
     return false;
 
   var playerLimit = gameSettingsObject.playerLimit;
   var customBoardSettings = gameSettingsObject.customBoardSettings;
 
+  var isValidPlayerLimit = validatePlayerLimit(playerLimit);
+  var isValidCustomBoardSettings = validateCustomBoardSettings(customBoardSettings);
+
+  return isValidCustomBoardSettings && isValidPlayerLimit;
+};
+
+var validatePlayerLimit = function (playerLimit) {
   var badValue = false;
   if (isInt(playerLimit)
     && playerLimit > MIN_PLAYERS_PER_GAME
@@ -62,12 +69,15 @@ var validateGameSettings = function (gameSettingsObject) { //TODO refactor this
       }
     });
   } else if (_.isObject(playerLimit)
-    && validateMinMaxObject(gameSettingsObject.playerLimit)) {
+    && validateMinMaxIntegerObject(playerLimit)) {
 
   } else {
     return false;
   }
+  return !badValue;
+};
 
+var validateCustomBoardSettings = function (customBoardSettings) {
   var badSetting = false;
   _.each(customBoardSettings, function (value, key) {
     if (_.isArray(value)) {
@@ -77,20 +87,18 @@ var validateGameSettings = function (gameSettingsObject) { //TODO refactor this
           badSetting = true;
         }
       });
-    } else if (!validateMinMaxObject(value)){
+    } else if (!validateMinMaxIntegerObject(value)){
       console.log('bad setting ' + key + ": " + value)
       badSetting = true;
     }
   });
-
-
-  return !badSetting && !badValue;
+  return !badSetting;
 };
 
-var validateMinMaxObject = function (object) {
+var validateMinMaxIntegerObject = function (object) {
   return object && isInt(object.min) && isInt(object.max) && (object.max > object.min);
 };
 
 var isInt = function (n) {
   return _.isNumber(n) && n % 1 === 0;
-}
+};
