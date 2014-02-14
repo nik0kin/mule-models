@@ -10,3 +10,19 @@ gameConfigArray.push({
 });
 
 exports.validGameParams = gameConfigArray;
+
+
+exports.validCheckersGameParams = {
+  name : "niks checkers game",
+  roleBundle : {
+    name : 'Checkers'
+  },
+
+  //don't need max players
+
+  ruleBundleGameSettings : {
+    customBoardSettings : {
+      size : 8
+    }
+  }
+};

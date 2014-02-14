@@ -23,8 +23,12 @@ var GameSchema = new Schema({
   turnStyle : {type : String, default : 'default'},
   turnTimer : {type : String, default : 'default'},
 
-  maxPlayers : { type: Number, default: 0 },
-  ruleBundle : Schema.Types.ObjectId ,
+  maxPlayers : { type: Number, default: 1 },
+  ruleBundle : {
+    type: Schema.Types.Mixed,
+    name : {type : String, default : 'default'},
+    zID : {type: Schema.Types.ObjectId}
+  },
 
   //// GAME INFO ////
   gameStatus: {type: String, default: 'open'},

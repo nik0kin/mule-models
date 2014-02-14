@@ -36,6 +36,7 @@ exports.getUserQ = function (userID) {
 
 exports.addGameQ = function (createGameParameters, creator) {
   var newGame = new Game(createGameParameters);
+  newGame.markModified(createGameParameters.ruleBundle);
   return newGame.saveQ();
 };
 
