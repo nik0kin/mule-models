@@ -3,6 +3,9 @@
  *
  * Created by niko on 1/28/14.
  */
+ 
+var MAX_GAMENAME_LENGTH = 75;
+ 
 var _ = require('underscore');
 
 var gameStatusUtils = require('mule-utils/gameStatusUtils'),
@@ -10,7 +13,7 @@ var gameStatusUtils = require('mule-utils/gameStatusUtils'),
   RuleBundle = require('../RuleBundle/index').Model;
 
 exports.addValidators = function (GameSchema) {
-  GameSchema.path('name').validate(validateNameLength, '\'name\' length must be within the range 1 - 30')
+  GameSchema.path('name').validate(validateNameLength, '\'name\' length must be within the range 1 - ' + MAX_GAMENAME_LENGTH)
   //GameSchema.path('ruleBundle').validate(validateRuleBundleID, 'invalid ruleBundle ID or name');
   GameSchema.path('gameStatus').validate(gameStatusUtils.validateGameStatus, 'gameStatus must equal one of the following: open, inProgress, or finished');
   GameSchema.path('maxPlayers').validate(validateNumberOfPlayers, 'maxPlayers must be within the range: 2 - 10');
@@ -18,7 +21,7 @@ exports.addValidators = function (GameSchema) {
 };
 
 var validateNameLength = function (nameStr) {
-  return _.isString(nameStr) && nameStr.length > 0 && nameStr.length <= 30;
+  return _.isString(nameStr) && nameStr.length > 0 && nameStr.length <= MAX_GAMENAME_LENGTH;
 };
 
 var validateNumberOfPlayers = function (number) {
