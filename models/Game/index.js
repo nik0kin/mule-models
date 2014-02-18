@@ -27,7 +27,7 @@ var GameSchema = new Schema({
   ruleBundle : {
     type: Schema.Types.Mixed,
     name : {type : String, default : 'default'},
-    zID : {type: Schema.Types.ObjectId}
+    id : {type: Schema.Types.ObjectId}
   },
 
   //// GAME INFO ////

@@ -4,8 +4,7 @@
  * Created by niko on 1/28/14.
  */
 
-var mongoose = require('mongoose-q')(require('mongoose')),
-  Q = require('q'),
+var Q = require('q'),
   _ = require('underscore'),
   winston = require('winston');
 

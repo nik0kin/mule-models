@@ -6,7 +6,7 @@
 
 */
 
-var mongoose = require('mongoose'),
+var mongoose = global.getMongoose(),
     crypto = require('crypto');
 
 
