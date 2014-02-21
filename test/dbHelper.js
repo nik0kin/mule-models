@@ -9,8 +9,19 @@ var Q = require('q');
 require ('../server.js');
 
 var Game = require('../models/Game/index').Model,
-  User = require('../models/User').Model;
+  User = require('../models/User').Model,
+  GameBoard = require('../models/GameBoard/index').Model,
+  RuleBundle = require('../models/RuleBundle/index').Model;
 
+
+exports.clearAllModelsCollectionQ = function () {
+  return Q.all([
+    User.removeQ({}),
+    Game.removeQ({}),
+    GameBoard.removeQ({}),
+    RuleBundle.removeQ({})
+  ]);
+};
 
 exports.clearUsersAndGamesCollectionQ = function () {
   return Q.all([User.removeQ({}), Game.removeQ({})]);

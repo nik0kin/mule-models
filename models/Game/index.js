@@ -32,6 +32,7 @@ var GameSchema = new Schema({
 
   //// GAME INFO ////
   gameStatus: {type: String, default: 'open'},
+  gameBoard: {type: Schema.Types.ObjectId},
   turnNumber: {type: Number, default: 0},        //open, inprogress, finished
   players : {type : Schema.Types.Mixed, default : {} },
 
@@ -39,10 +40,8 @@ var GameSchema = new Schema({
   ruleBundleGameSettings : {
     type : Schema.Types.Mixed,
     customBoardSettings : {type : Schema.Types.Mixed }
-  },
+  }
 
-  //// ETC ////
-  currentLocalIDCounter: {type: Number, default: 0} //counter for id's of all units of the game
 });
 
 /**
