@@ -1,6 +1,6 @@
 {
   "name": "mule-models",
-  "version": "0.1.7",
+  "version": "0.1.8",
   "description": "Mongoose Models for ProjectMule",
   "main": "index.js",
   "directories": {
@@ -10,6 +10,7 @@
     "test": "grunt"
   },
   "dependencies": {
+    "mule-rules" : "git+https://github.com/nik0kin/mule-rules.git#master",
     "mule-utils" : "git+https://github.com/nik0kin/mule-utils.git#master",
 
     "q": "~0.9.7",

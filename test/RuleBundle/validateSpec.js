@@ -12,13 +12,10 @@ var dbHelper = require('../dbHelper'),
   testHelper = require('mule-utils/lib/testUtils/mochaHelper'),
   RuleBundleModel = require('../../models/RuleBundle/index').Model;
 
-require.extensions[".json"] = function (m) {
-  m.exports = JSON.parse(fs.readFileSync(m.filename));
-};
 
-var checkersRuleBundleJSON = require('../../bundles/checkers.json'),
-  backgammonRuleBundleJSON = require('../../bundles/backgammon.json'),
-  vikingsRuleBundleJSON = require('../../bundles/vikings.json');
+var checkersRuleBundleJSON = require('mule-rules').getRuleBundleJSON('checkers'),
+  backgammonRuleBundleJSON = require('mule-rules').getRuleBundleJSON('backgammon'),
+  vikingsRuleBundleJSON = require('mule-rules').getRuleBundleJSON('vikings');
 
 
 describe('Models: ', function () {
