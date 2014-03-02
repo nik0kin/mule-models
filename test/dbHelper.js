@@ -33,7 +33,7 @@ exports.clearAllModelsCollectionCallback = function (done) {
 };
 
 exports.clearUsersAndGamesCollectionQ = function () {
-  return Q.all([User.removeQ({}), Game.removeQ({})]);
+  return Q.all([User.removeQ({}), Game.removeQ({}), GameBoard.removeQ({})]);
 };
 exports.clearUsersAndGamesCollection = function (done) {
   exports.clearUsersAndGamesCollectionQ()
