@@ -23,6 +23,15 @@ exports.clearAllModelsCollectionQ = function () {
   ]);
 };
 
+exports.clearAllModelsCollectionCallback = function (done) {
+  exports.clearAllModelsCollectionQ()
+    .done(function (value) {
+      done();
+    }, function (err) {
+      done(err);
+    });
+};
+
 exports.clearUsersAndGamesCollectionQ = function () {
   return Q.all([User.removeQ({}), Game.removeQ({})]);
 };
