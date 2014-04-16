@@ -16,7 +16,7 @@ var GameBoardSchema = new Schema({
   ruleBundle : {
     type: Schema.Types.Mixed,
     name : {type : String, default : 'default'},
-    id : {type: Schema.Types.ObjectId}
+    id : {type: Schema.Types.ObjectId, ref: 'RuleBundle'}
   },
 
   boardType: { type: String, default: 'default' },
