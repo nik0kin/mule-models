@@ -8,34 +8,43 @@ var Q = require('q'),
   _ = require('underscore'),
   winston = require('winston');
 
-var gameStatusUtils = require('mule-utils/gameStatusUtils');
+var gameStatusUtils = require('mule-utils/gameStatusUtils'),
+  startGameCode = require('./beginningOfGameCode');
 
 exports.changeStateQCallback = function () {
   return function (newState) {
-    var _this = this;
+    var thisGame = this;
     return Q.promise(function (resolve, reject) {
       if (!gameStatusUtils.validateGameStatus(newState))
         return reject('Invalid newState: ' + newState);
 
-      if (_this.playersCount < 1)
+      if (thisGame.playersCount < 1)
         return reject('Empty Game');
 
+      var promise = Q(thisGame);
 
       switch (newState) {
         case 'open' :
           break;
         case 'inProgress' :
-          _this.gameStatus = 'inProgress';
+          thisGame.gameStatus = 'inProgress';
+          promise = startGameCode.startGameQ(thisGame);
           break;
         case 'finished' :
           break;
       }
 
-      _this.saveQ()
-        .done(function () {
-          winston.info('game[' +  _this._id + '] State changed to ' + _this.gameStatus);
-          resolve();
-        }, reject);
+      promise
+        .then(function (game) {
+          return game.saveQ();
+        })
+        .then(function (game) {
+          winston.info('game[' +  game._id + '] State changed to ' + game.gameStatus);
+          resolve(game);
+        })
+        .fail(function (err) {
+          reject(err);
+        });
     });
   };
 };
