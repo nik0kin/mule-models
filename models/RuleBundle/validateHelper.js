@@ -4,7 +4,7 @@
  * Created by niko on 2/9/14.
  */
 
-var _ = require('underscore');
+var _ = require('lodash');
 
 var MIN_PLAYERS_PER_GAME = 1;
 var MAX_PLAYERS_PER_GAME = 100;

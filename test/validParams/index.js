@@ -2,7 +2,7 @@
  * index
  * - @nikpoklitar
  */
-var _ = require('underscore');
+var _ = require('lodash');
 
 var gameConfigs = require('./gameConfig');
 

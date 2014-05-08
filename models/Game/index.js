@@ -6,7 +6,7 @@
 var mongoose = global.getMongoose(),
   Schema = mongoose.Schema,
   Q = require('q'),
-  _ = require('underscore'),
+  _ = require('lodash'),
   winston = require('winston');
 
 var validateHelp = require('./validateHelper'),
@@ -27,12 +27,12 @@ var GameSchema = new Schema({
   ruleBundle : {
     type: Schema.Types.Mixed,
     name : {type : String, default : 'default'},
-    id : {type: Schema.Types.ObjectId, ref: 'RuleBundle'}
+    id : {type: Schema.Types.ObjectId}
   },
 
   //// GAME INFO ////
   gameStatus: {type: String, default: 'open'},
-  gameBoard: {type: Schema.Types.ObjectId, ref: 'GameBoard'},
+  gameBoard: {type: Schema.Types.ObjectId},
   turnNumber: {type: Number, default: 0},        //open, inprogress, finished
   players : {type : Schema.Types.Mixed, default : {} },
 

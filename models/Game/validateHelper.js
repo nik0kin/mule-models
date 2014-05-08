@@ -6,7 +6,7 @@
  
 var MAX_GAMENAME_LENGTH = 75;
  
-var _ = require('underscore');
+var _ = require('lodash');
 
 var gameStatusUtils = require('mule-utils/gameStatusUtils'),
   playerGameStatusUtils = require('mule-utils/playerGameStatusUtils'),

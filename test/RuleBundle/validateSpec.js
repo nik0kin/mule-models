@@ -5,7 +5,7 @@
  */
 
 var should = require('should'),
-  _ = require('underscore'),
+  _ = require('lodash'),
   fs = require('fs');
 
 var dbHelper = require('../dbHelper'),

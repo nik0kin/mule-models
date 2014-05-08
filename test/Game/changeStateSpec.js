@@ -6,7 +6,7 @@
 
 var Q = require('q'),
   should = require('should'),
-  _ = require('underscore');
+  _ = require('lodash');
 
 require('../../server');
 

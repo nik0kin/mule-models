@@ -5,5 +5,8 @@ module.exports = {
   Game : require('./models/Game'),
   User : require('./models/User'),
   RuleBundle : require('./models/RuleBundle'),
-  GameBoard : require('./models/GameBoard')
+  GameBoard : require('./models/GameBoard'),
+
+  PieceState : require('./models/PieceState'),
+  SpaceState : require('./models/SpaceState')
 };

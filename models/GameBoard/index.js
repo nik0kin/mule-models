@@ -16,13 +16,13 @@ var GameBoardSchema = new Schema({
   ruleBundle : {
     type: Schema.Types.Mixed,
     name : {type : String, default : 'default'},
-    id : {type: Schema.Types.ObjectId, ref: 'RuleBundle'}
+    id : {type: Schema.Types.ObjectId}
   },
 
   boardType: { type: String, default: 'default' },
   board: {},
 
-  spaces : [Schema.Types.Mixed],
+  spaces : [{type: String, ref: 'SpaceState'}],
   pieces : [Schema.Types.Mixed],
 
   globalVariables: {},

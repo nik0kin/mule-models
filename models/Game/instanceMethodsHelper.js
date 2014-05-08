@@ -5,7 +5,7 @@
  */
 
 var Q = require('q'),
-  _ = require('underscore'),
+  _ = require('lodash'),
   winston = require('winston');
 
 /*exports.addMethods = function(GameSchema, _this) {
