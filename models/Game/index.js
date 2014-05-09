@@ -27,12 +27,12 @@ var GameSchema = new Schema({
   ruleBundle : {
     type: Schema.Types.Mixed,
     name : {type : String, default : 'default'},
-    id : {type: Schema.Types.ObjectId}
+    id : {type: Schema.Types.ObjectId, ref: 'RuleBundle'}
   },
 
   //// GAME INFO ////
   gameStatus: {type: String, default: 'open'},
-  gameBoard: {type: Schema.Types.ObjectId},
+  gameBoard: {type: Schema.Types.ObjectId, ref: 'GameBoard'},
   turnNumber: {type: Number, default: 0},        //open, inprogress, finished
   players : {type : Schema.Types.Mixed, default : {} },
 

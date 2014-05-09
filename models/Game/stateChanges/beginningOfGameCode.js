@@ -9,10 +9,12 @@ var Q = require('q'),
 exports.startGameQ = function (game) {
   var GameBoard = require('mule-models').GameBoard.Model, // TODO why can I put this higher than this scope?
     RuleBundle = require('mule-models').RuleBundle.Model,
+    PieceState = require('mule-models').PieceState.Model,
     SpaceState = require('mule-models').SpaceState.Model;
 
   return Q.promise(function (resolve, reject) {
-    var newSpacesIds = [];
+    var newSpacesIds = [],
+      newPieceIds = [];
 
     var currentRuleBundle;
 
@@ -26,24 +28,31 @@ exports.startGameQ = function (game) {
         // every player gets 3 pieces (no space assigned)
         var pieceId = 0;
 
-        var pieces = [];
+        var piece1, piece2;
 
-        pieces.push({
+        piece1 = new PieceState({
           id: pieceId++,
-          spaceId: 0,
-          owner: '1'
+          location: 0,
+          ownerId: '1'
         });
-        pieces.push({
+        piece2 = new PieceState({
           id: pieceId++,
-          spaceId: 0,
-          owner: '2'
+          location: 0,
+          ownerId: '2'
         });
 
-        foundGameBoard.pieces = pieces;
-        foundGameBoard.markModified('pieces');
+        var piecePromise1 = piece1.saveQ()
+          .then(function (savedPieceState) {
+            newPieceIds.push(savedPieceState._id);
+          });
+
+        var piecePromise2 = piece2.saveQ()
+          .then(function (savedPieceState) {
+            newPieceIds.push(savedPieceState._id);
+          });
 
         // make spaces copy from ruleBundle gameboard or w/e
-        var createSpacesPromises = [];
+        var createSpacesPromises = [piecePromise1, piecePromise2];
 
         var spacesMaster;
 
@@ -74,6 +83,9 @@ exports.startGameQ = function (game) {
       .then(function (foundGameBoard) {
         foundGameBoard.spaces = newSpacesIds;
         foundGameBoard.markModified('spaces');
+
+        foundGameBoard.pieces = newPieceIds;
+        foundGameBoard.markModified('pieces');
 
         return foundGameBoard.saveQ();
       })
