@@ -26,7 +26,7 @@ var GameBoardSchema = new Schema({
   pieces : [{type: String, ref: 'PieceState'}],
 
   globalVariables: {},
-  playerVariables: {}
+  playerVariables: {type: Schema.Types.Mixed, default: {}}
 
 });
 

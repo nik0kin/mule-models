@@ -10,7 +10,7 @@ var PieceStateSchema = new Schema({
   locationId : {type: String}, // refers to board[].id(pieceId), that it is currently located on
   ownerId : {type: String}, //relative to Game player ids
 
-  className: {type: String}, //refers to ruleBundle.rules.pieces
+  class: {type: String}, //classes listed at ruleBundle.rules.pieces
   attributes: {} // grab attributes from board[].attributes (remember these can change)
 });
 

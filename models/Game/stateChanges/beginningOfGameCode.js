@@ -31,35 +31,18 @@ exports.startGameQ = function (game) {
         };
         var spacesMaster = spacesMasterOptions[foundGameBoard.boardType];
 
-        // every player gets 3 pieces (no space assigned)
-        var pieceId = 0;
+        var createPromises = [];
 
-        var piece1, piece2;
-
-        piece1 = new PieceState({
-          id: pieceId++,
-          locationId: spacesMaster[0].id,
-          ownerId: '1'
+        // DEFINE PLAYER VARS
+        foundGameBoard.playerVariables = {};
+        _.each(game.players, function (value, key) {
+          foundGameBoard.playerVariables[key] = {
+            lose: false
+          };
         });
-        piece2 = new PieceState({
-          id: pieceId++,
-          locationId: spacesMaster[0].id,
-          ownerId: '2'
-        });
+        foundGameBoard.markModified('playerVariables');
 
-        var piecePromise1 = piece1.saveQ()
-          .then(function (savedPieceState) {
-            newPieceIds.push(savedPieceState._id);
-          });
-
-        var piecePromise2 = piece2.saveQ()
-          .then(function (savedPieceState) {
-            newPieceIds.push(savedPieceState._id);
-          });
-
-        // make spaces copy from ruleBundle gameboard or w/e
-        var createSpacesPromises = [piecePromise1, piecePromise2];
-
+        // CREATE SPACES
         _.each(spacesMaster, function (value, key) {
           var newSpaceState = new SpaceState();
           newSpaceState.boardSpaceId = value.id;
@@ -70,12 +53,62 @@ exports.startGameQ = function (game) {
               newSpacesIds.push(savedSpaceState._id);
             });
 
-          createSpacesPromises.push(promise);
+          createPromises.push(promise);
         });
 
-        return Q.all(createSpacesPromises)
+        // CREATE PIECES
+        var promiseSaveAndAddIdToArray = function (params) {
+          var newPieceState = new PieceState(params);
+          return newPieceState.saveQ()
+            .then(function (savedPieceState) {
+              newPieceIds.push(savedPieceState._id);
+            });
+        };
+
+        var pieceId = 0;
+        _.each(currentRuleBundle.rules.startingPieces, function (startingPiecesValue, startingPiecesTypeKey) {
+          _.each(startingPiecesValue, function (pieceDef) {
+            var params = {
+              id: pieceId++,
+              class: pieceDef.class,
+              attributes: pieceDef.attributes
+            };
+
+            switch(startingPiecesTypeKey) {
+              case 'each':
+                //make one for each player (gotta check how many players)
+                _.each(foundGameBoard.playerVariables, function (value, key) {
+                  params.ownerId = key;
+                  params.locationId = pieceDef.spaceId;
+
+                  var newPieceState = new PieceState(params);
+
+                  createPromises.push(promiseSaveAndAddIdToArray(params));
+                });
+                break;
+              case 'each-random-location':
+                //make one for each player (gotta check how many players) in a random location (of the available spaces)
+                _.each(foundGameBoard.playerVariables, function (value, key) {
+                  var randomLoc = spacesMaster[Math.floor(Math.random() * (spacesMaster.length + 1))].id;
+                  params.locationId = randomLoc;
+                  params.ownerId = key;
+                  createPromises.push(promiseSaveAndAddIdToArray(params));
+                });
+                break;
+              default:
+                //make one for the player (startingPiecesTypeKey)
+                params.locationId = pieceDef.spaceId;
+                params.ownerId = startingPiecesTypeKey;
+
+                createPromises.push(promiseSaveAndAddIdToArray(params));
+                break;
+            }
+          });
+        });
+
+        return Q.all(createPromises)
           .then (function () {
-            return Q(foundGameBoard);
+          return Q(foundGameBoard);
         });
       })
       .then(function (foundGameBoard) {
