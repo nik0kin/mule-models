@@ -25,6 +25,12 @@ exports.startGameQ = function (game) {
         return GameBoard.findByIdQ(game.gameBoard);
       })
       .then(function (foundGameBoard) {
+        var spacesMasterOptions = {
+          'built': foundGameBoard.board,
+          'static': currentRuleBundle.rules.board
+        };
+        var spacesMaster = spacesMasterOptions[foundGameBoard.boardType];
+
         // every player gets 3 pieces (no space assigned)
         var pieceId = 0;
 
@@ -32,12 +38,12 @@ exports.startGameQ = function (game) {
 
         piece1 = new PieceState({
           id: pieceId++,
-          location: 0,
+          locationId: spacesMaster[0].id,
           ownerId: '1'
         });
         piece2 = new PieceState({
           id: pieceId++,
-          location: 0,
+          locationId: spacesMaster[0].id,
           ownerId: '2'
         });
 
@@ -53,14 +59,6 @@ exports.startGameQ = function (game) {
 
         // make spaces copy from ruleBundle gameboard or w/e
         var createSpacesPromises = [piecePromise1, piecePromise2];
-
-        var spacesMaster;
-
-        if (foundGameBoard.boardType === 'built') { // TODO enumifiy this
-          spacesMaster = foundGameBoard.board;
-        } else if (foundGameBoard.boardType === 'static') {
-          spacesMaster = currentRuleBundle.rules.board;
-        }
 
         _.each(spacesMaster, function (value, key) {
           var newSpaceState = new SpaceState();
@@ -89,10 +87,22 @@ exports.startGameQ = function (game) {
 
         return foundGameBoard.saveQ();
       })
-      .then(function () {
-        resolve(game);
+      .then(function (gameBoard) {
+        return exports.startRoundQ(game);
+      })
+      .then(function (modifiedGame) {
+        resolve(modifiedGame);
       })
       .fail(reject);
   });
 };
 
+exports.startRoundQ = function (_game) {
+  return Q(_game)
+    .then(function (game) {
+      game.turnNumber = 1;
+      console.log('Round: ' + game.turnNumber + ' ... FIGHT');
+
+      return Q(game);
+    });
+};
