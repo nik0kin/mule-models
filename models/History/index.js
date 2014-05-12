@@ -30,9 +30,9 @@ HistorySchema.statics.createQ = function (game) {
 
 HistorySchema.methods = {
   addPlayerTurnAndSaveQ: function (player, turn) {
-    turn.dateSubmitted = Date.now();
+    turn.dateSubmitted = new Date();
 
-    this.turns[player][currentTurn - 1] = turn;
+    this.turns[player][this.currentRound - 1] = turn;
     this.markModified('turns');
 
     return this.saveQ()
@@ -41,10 +41,10 @@ HistorySchema.methods = {
     return this.turns[player][turnNumber - 1];
   },
   getPlayersTurnStatus: function () {
-    var stati = {};
-
+    var stati = {},
+      currentRound = this.currentRound;
     _.each(this.turns, function (value, key) {
-      stati[key] = value[this.currentRound - 1] ? true : false;
+      stati[key] = value[currentRound - 1] ? true : false;
     });
 
     return stati;
@@ -57,6 +57,15 @@ HistorySchema.methods = {
     });
 
     return canAdvance;
+  },
+  getRoundTurns: function (turnNumber) {
+    var turns = {};
+
+    _.each(this.turns, function (playersTurns, playerRelId) {
+      turns[playerRelId] = playersTurns[turnNumber - 1];
+    });
+
+    return turns;
   }
 
 };

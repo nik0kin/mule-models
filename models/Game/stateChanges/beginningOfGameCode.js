@@ -70,7 +70,7 @@ exports.startGameQ = function (game) {
         _.each(currentRuleBundle.rules.startingPieces, function (startingPiecesValue, startingPiecesTypeKey) {
           _.each(startingPiecesValue, function (pieceDef) {
             var params = {
-              id: pieceId++,
+              id: pieceId,
               class: pieceDef.class,
               attributes: pieceDef.attributes
             };
@@ -79,27 +79,29 @@ exports.startGameQ = function (game) {
               case 'each':
                 //make one for each player (gotta check how many players)
                 _.each(foundGameBoard.playerVariables, function (value, key) {
-                  params.ownerId = key;
-                  params.locationId = pieceDef.spaceId;
+                  var p = _.clone(params);
+                  p.ownerId = key;
+                  p.locationId = pieceDef.spaceId;
 
-                  var newPieceState = new PieceState(params);
-
-                  createPromises.push(promiseSaveAndAddIdToArray(params));
+                  createPromises.push(promiseSaveAndAddIdToArray(p));
                 });
                 break;
               case 'each-random-location':
                 //make one for each player (gotta check how many players) in a random location (of the available spaces)
                 _.each(foundGameBoard.playerVariables, function (value, key) {
                   var randomLoc = spacesMaster[Math.floor(Math.random() * (spacesMaster.length + 1))].id;
-                  params.locationId = randomLoc;
-                  params.ownerId = key;
-                  createPromises.push(promiseSaveAndAddIdToArray(params));
+                  var p = _.clone(params);
+                  p.id = pieceId++;
+                  p.locationId = randomLoc;
+                  p.ownerId = key;
+                  createPromises.push(promiseSaveAndAddIdToArray(p));
                 });
                 break;
               default:
                 //make one for the player (startingPiecesTypeKey)
                 params.locationId = pieceDef.spaceId;
                 params.ownerId = startingPiecesTypeKey;
+                pieceId++;
 
                 createPromises.push(promiseSaveAndAddIdToArray(params));
                 break;
@@ -128,9 +130,6 @@ exports.startGameQ = function (game) {
 
         return foundGameBoard.saveQ();
       })
-      .then(function (gameBoard) {
-        return exports.startRoundQ(game);
-      })
       .then(function (modifiedGame) {
         resolve(modifiedGame);
       })
@@ -142,12 +141,3 @@ exports.startGameQ = function (game) {
   });
 };
 
-exports.startRoundQ = function (_game) {
-  return Q(_game)
-    .then(function (game) {
-      game.turnNumber++;
-      console.log('Round: ' + game.turnNumber + ' ... FIGHT');
-
-      return Q(game);
-    });
-};

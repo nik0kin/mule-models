@@ -31,9 +31,8 @@ var GameSchema = new Schema({
   },
 
   //// GAME INFO ////
-  gameStatus: {type: String, default: 'open'},
+  gameStatus: {type: String, default: 'open'},//open, inprogress, finished
   gameBoard: {type: Schema.Types.ObjectId, ref: 'GameBoard'},
-  turnNumber: {type: Number, default: 0},        //open, inprogress, finished
   players : {type : Schema.Types.Mixed, default : {} },
 
   //// SETTINGS ////
@@ -80,7 +79,7 @@ GameSchema.methods = {
   getPlayerPosition : function (playerID) {
     var position = -1;
     _.each(this.players, function (value, key) {
-      if (_.isEqual(value.playerID, playerID)) { // === doesn't work, but idk what types they were ( _.isString said false) TODO figure it out and write a unit test for it
+      if (_.isEqual(value.playerID, playerID)) {
         position = key;
       }
     });
