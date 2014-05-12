@@ -2,11 +2,15 @@ require('mule-utils/mongooseUtils');
 
 
 module.exports = {
-  Game : require('./models/Game'),
-  User : require('./models/User'),
-  RuleBundle : require('./models/RuleBundle'),
-  GameBoard : require('./models/GameBoard'),
+  User: require('./models/User'),
 
-  PieceState : require('./models/PieceState'),
-  SpaceState : require('./models/SpaceState')
+  RuleBundle: require('./models/RuleBundle'),
+
+  Game: require('./models/Game'),
+  GameBoard: require('./models/GameBoard'),
+
+  History: require('./models/History'),
+
+  PieceState: require('./models/PieceState'),
+  SpaceState: require('./models/SpaceState')
 };

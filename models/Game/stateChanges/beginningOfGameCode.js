@@ -9,6 +9,7 @@ var Q = require('q'),
 exports.startGameQ = function (game) {
   var GameBoard = require('mule-models').GameBoard.Model, // TODO why can I put this higher than this scope?
     RuleBundle = require('mule-models').RuleBundle.Model,
+    History = require('mule-models').History.Model,
     PieceState = require('mule-models').PieceState.Model,
     SpaceState = require('mule-models').SpaceState.Model;
 
@@ -112,6 +113,13 @@ exports.startGameQ = function (game) {
         });
       })
       .then(function (foundGameBoard) {
+        return History.createQ(game)
+          .then(function (newHistory) {
+            foundGameBoard.history = newHistory._id;
+            return Q(foundGameBoard);
+          });
+      })
+      .then(function (foundGameBoard) {
         foundGameBoard.spaces = newSpacesIds;
         foundGameBoard.markModified('spaces');
 
@@ -126,14 +134,18 @@ exports.startGameQ = function (game) {
       .then(function (modifiedGame) {
         resolve(modifiedGame);
       })
-      .fail(reject);
+      .fail(function (err) {
+        console.log('startGameQ failed: ');
+        console.log(err);
+        reject(err);
+      });
   });
 };
 
 exports.startRoundQ = function (_game) {
   return Q(_game)
     .then(function (game) {
-      game.turnNumber = 1;
+      game.turnNumber++;
       console.log('Round: ' + game.turnNumber + ' ... FIGHT');
 
       return Q(game);

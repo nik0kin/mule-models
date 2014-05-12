@@ -9,8 +9,6 @@ var Schema = mongoose.Schema;
 var validateHelp = require('./validateHelper');
 
 var GameBoardSchema = new Schema({
-
-  id: { type: Number, index: true },
   gameID : {type: Schema.Types.ObjectId}, //do i need this?
 
   ruleBundle : {
@@ -26,7 +24,9 @@ var GameBoardSchema = new Schema({
   pieces : [{type: String, ref: 'PieceState'}],
 
   globalVariables: {},
-  playerVariables: {type: Schema.Types.Mixed, default: {}}
+  playerVariables: {type: Schema.Types.Mixed, default: {}},
+
+  history: {type: String, ref: 'History'}
 
 });
 
