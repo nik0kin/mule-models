@@ -79,7 +79,7 @@ GameSchema.methods = {
   getPlayerPosition : function (playerID) {
     var position = -1;
     _.each(this.players, function (value, key) {
-      if (_.isEqual(value.playerID, playerID)) {
+      if (_.isEqual('' + value.playerID, '' + playerID)) {
         position = key;
       }
     });

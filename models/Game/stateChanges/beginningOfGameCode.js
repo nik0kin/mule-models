@@ -80,6 +80,7 @@ exports.startGameQ = function (game) {
                 //make one for each player (gotta check how many players)
                 _.each(foundGameBoard.playerVariables, function (value, key) {
                   var p = _.clone(params);
+                  p.id = pieceId++;
                   p.ownerId = key;
                   p.locationId = pieceDef.spaceId;
 
