@@ -48,7 +48,19 @@ validateHelp.addValidators(GameBoardSchema);
  * Methods
  */
 GameBoardSchema.methods = {
-  //joinGameQ : instanceMethodsHelp.joinGameQCallback()
+
+};
+
+GameBoardSchema.statics.findByIdWithPopulatedStatesQ = function (gameBoardId) {
+  var GameBoard = this;
+
+  return GameBoard.findByIdQ(gameBoardId)
+    .then(function (gameBoard) {
+      return gameBoard.populateQ('spaces');
+    })
+    .then(function (gameBoard) {
+      return gameBoard.populateQ('pieces');
+    })
 };
 
 exports.Schema = GameBoardSchema;

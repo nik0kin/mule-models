@@ -11,6 +11,10 @@ var TurnSchema = new Schema({
 
 var HistorySchema = new Schema({
   currentRound: { type: Number, default: 1},
+
+  turnOrder: [{type: String}],
+  currentPlayerIndexTurn: { type: Number, default: 0},                  // whos turn is it?  (if roundRobin)
+
   turns: { type: Schema.Types.Mixed, default: {} }
 });
 
@@ -21,9 +25,11 @@ HistorySchema.statics.createQ = function (game) {
 
   _.each(game.players, function (value, key) {
     newHistory.turns[key] = [];
+    newHistory.turnOrder.push(key);
   });
 
   newHistory.markModified('turns');
+  newHistory.markModified('turnOrder');
 
   return newHistory.saveQ();
 };
@@ -49,7 +55,7 @@ HistorySchema.methods = {
 
     return stati;
   },
-  getCanAdvanceTurn: function () {
+  getCanAdvancePlayByMailRound: function () {
     var canAdvance = true;
 
     _.each(this.getPlayersTurnStatus(), function (value) {
@@ -57,6 +63,14 @@ HistorySchema.methods = {
     });
 
     return canAdvance;
+  },
+  progressRoundRobinPlayerTurnTicker: function () {
+    var next = (this.currentPlayerIndexTurn + 1) % _.size(this.turns);
+
+    this.currentPlayerIndexTurn = next;
+  },
+  isPlayersTurn: function (player) {
+    return _.isEqual(player, this.turnOrder[this.currentPlayerIndexTurn]);
   },
   getRoundTurns: function (turnNumber) {
     var turns = {};
