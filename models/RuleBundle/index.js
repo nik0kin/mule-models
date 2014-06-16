@@ -50,6 +50,9 @@ validateHelp.addValidators(RuleBundleSchema);
  */
 RuleBundleSchema.methods = {
   //joinGameQ : instanceMethodsHelp.joinGameQCallback()
+  getSpaceClass: function (className) {
+
+  }
 };
 
 exports.Schema = RuleBundleSchema;

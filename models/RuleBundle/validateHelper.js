@@ -58,7 +58,7 @@ var validateGameSettings = function (gameSettingsObject) {
 var validatePlayerLimit = function (playerLimit) {
   var badValue = false;
   if (isInt(playerLimit)
-    && playerLimit > MIN_PLAYERS_PER_GAME
+    && playerLimit >= MIN_PLAYERS_PER_GAME
     && playerLimit <= MAX_PLAYERS_PER_GAME) {
 
   } else if (_.isArray(playerLimit)) {

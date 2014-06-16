@@ -4,6 +4,11 @@ var mongoose = global.getMongoose(),
   _ = require('lodash'),
   winston = require('winston');
 
+var ActionSchema = new Schema({
+  type: {type: String},
+  params: {type: Schema.Types.Mixed}
+});
+
 var TurnSchema = new Schema({
   dateSubmitted: {type: Date},
   actions: []
@@ -13,7 +18,7 @@ var HistorySchema = new Schema({
   currentRound: { type: Number, default: 1},
 
   turnOrder: [{type: String}],
-  currentPlayerIndexTurn: { type: Number, default: 0},                  // whos turn is it?  (if roundRobin)
+  currentPlayerIndexTurn: { type: Number, default: 0},               // whos turn is it?  (if roundRobin)
 
   turns: { type: Schema.Types.Mixed, default: {} }
 });
