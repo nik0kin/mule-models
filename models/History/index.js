@@ -85,6 +85,16 @@ HistorySchema.methods = {
     });
 
     return turns;
+  },
+
+  addMetaDataToActionQ: function (data, actionNumber, roundNumber) {
+    roundNumber = roundNumber || this.currentRound;
+    var action = this.turns['p1'][roundNumber - 1].actions[actionNumber];
+    action.metadata = data;
+console.log('added metadata')
+console.log(data)
+    this.markModified('turns');
+    return this.saveQ();
   }
 
 };

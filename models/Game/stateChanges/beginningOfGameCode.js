@@ -131,6 +131,16 @@ exports.startGameQ = function (game) {
 
         return foundGameBoard.saveQ();
       })
+      .then(function (foundGameBoard) {
+        // TODO hacky again :(
+        console.log('hacking hard here ' + foundGameBoard.ruleBundle.name)
+        if (foundGameBoard.ruleBundle.name === 'MuleSprawl') {
+          var x = require('mule-rules/bundles/mulesprawl/gameStart')(foundGameBoard);
+          console.log(x);
+          return x;
+        } else
+          return Q(foundGameBoard);
+      })
       .then(function (modifiedGame) {
         resolve(modifiedGame);
       })
