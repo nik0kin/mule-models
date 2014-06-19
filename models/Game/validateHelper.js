@@ -4,7 +4,9 @@
  * Created by niko on 1/28/14.
  */
  
-var MAX_GAMENAME_LENGTH = 75;
+var MAX_GAMENAME_LENGTH = 75,
+  MIN_TIMER_LENGTH = 30, // seconds
+  MAX_TIMER_LENGTH = 7 * 24 * 60 * 60; // a week
  
 var _ = require('lodash');
 
@@ -18,6 +20,10 @@ exports.addValidators = function (GameSchema) {
   GameSchema.path('gameStatus').validate(gameStatusUtils.validateGameStatus, 'gameStatus must equal one of the following: open, inProgress, or finished');
   GameSchema.path('maxPlayers').validate(validateNumberOfPlayers, 'maxPlayers must be within the range: 2 - 10');
   GameSchema.path('players').validate(validateGamePlayersObject, 'game->players object became invalid..');
+  GameSchema.path('turnProgressStyle').validate(validateTurnProgressStyle,
+    'game->validateTurnProgressStyle must equal one of the following: waitprogress, autoprogress, or autoboot');
+  GameSchema.path('turnTimeLimit').validate(validateTurnTimeLimit,
+    'game->turnTimeLimit must be within the range: ' + MIN_TIMER_LENGTH + ' - ' + MAX_TIMER_LENGTH);
 };
 
 var validateNameLength = function (nameStr) {
@@ -45,3 +51,11 @@ var validateGamePlayersObject = function (players) {
   return allGood;
 };
 
+var validateTurnProgressStyle = function (turnProgressStyle) {
+  return turnProgressStyle === 'waitprogress'
+    || turnProgressStyle === 'autoprogress' || turnProgressStyle === 'autoboot';
+};
+
+var validateTurnTimeLimit = function (turnTimeLimit) {
+  return MIN_TIMER_LENGTH <= turnTimeLimit && turnTimeLimit <= MAX_TIMER_LENGTH;
+};

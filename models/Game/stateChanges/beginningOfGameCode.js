@@ -135,11 +135,13 @@ exports.startGameQ = function (game) {
         // TODO hacky again :(
         console.log('hacking hard here ' + foundGameBoard.ruleBundle.name)
         if (foundGameBoard.ruleBundle.name === 'MuleSprawl') {
-          var x = require('mule-rules/bundles/mulesprawl/gameStart')(foundGameBoard);
-          console.log(x);
-          return x;
+          var ruleBundleGameStartQ = require('mule-rules/bundles/mulesprawl/gameStart');
+          return ruleBundleGameStartQ(foundGameBoard);
         } else
           return Q(foundGameBoard);
+      })
+      .then(function (modifiedGameBoard) {
+        return game.setTurnTimerQ();
       })
       .then(function (modifiedGame) {
         resolve(modifiedGame);

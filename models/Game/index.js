@@ -11,8 +11,7 @@ var mongoose = global.getMongoose(),
 
 var validateHelp = require('./validateHelper'),
   instanceMethodsHelp = require('./instanceMethodsHelper'),
-  stateChangeHelp = require('./stateChanges/index'),
-  RuleBundleSchema = require('../RuleBundle/index').Schema;
+  stateChangeHelp = require('./stateChanges/index');
 
 var GameSchema = new Schema({
   //// IDENTIFICATION ////
@@ -20,8 +19,9 @@ var GameSchema = new Schema({
   name : {type: String, default: "Unnamed Game"},
 
   //// HIGH LEVEL SETTINGS ////
-  turnStyle : {type : String, default : 'default'},
-  turnTimer : {type : String, default : 'default'},
+  turnProgressStyle : {type : String, default : 'waitprogress'},
+  turnTimeLimit : {type : Number, default : 5 * 60 }, // seconds
+  nextTurnTime: {type: Date, default: new Date(36613761181000)},
 
   maxPlayers : { type: Number, default: 1 },
   ruleBundle : {
@@ -84,6 +84,17 @@ GameSchema.methods = {
       }
     });
     return position;
+  },
+
+  setTurnTimerQ : function () {
+    // start the turn timer
+    if (this.turnProgressStyle === 'autoprogress') {
+      var currentDate = new Date();
+      this.nextTurnTime = new Date(currentDate.valueOf() + this.turnTimeLimit*1000);
+      return this.saveQ();
+    } else {
+      Q(this);
+    }
   }
 };
 

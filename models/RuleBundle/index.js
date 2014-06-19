@@ -16,6 +16,7 @@ var RuleBundleSchema = new mongoose.Schema({
   name : {type: String, default: "Unnamed RuleBundle"},
 
   turnSubmitStyle : { type: String, default: 'default' },
+  canAutoProgress: {type: Boolean, default: false},
 
   staticBoardSettings: {
     type : mongoose.Schema.Types.Mixed,

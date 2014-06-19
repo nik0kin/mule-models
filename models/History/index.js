@@ -41,11 +41,17 @@ HistorySchema.statics.createQ = function (game) {
 
 HistorySchema.methods = {
   addPlayerTurnAndSaveQ: function (player, turn) {
+    console.log('here ohh ' + player + '  ' + turn + ' wtf')
+    turn = turn || {};
     turn.dateSubmitted = new Date();
+    var thisHistory = this;
+    var players = _.isArray(player) ? player : [player];
+    _.each(players, function (playerRel) {
+      thisHistory.turns[playerRel][thisHistory.currentRound - 1] = turn;
+      console.log('saving ' + playerRel + '\'s turn ' + turn);
+    });
 
-    this.turns[player][this.currentRound - 1] = turn;
     this.markModified('turns');
-
     return this.saveQ()
   },
   getPlayerTurn: function (player, turnNumber) {
@@ -69,6 +75,9 @@ HistorySchema.methods = {
 
     return canAdvance;
   },
+  getRoundRobinNextPlayerRel: function () {
+    return this.turnOrder[this.currentPlayerIndexTurn];
+  },
   progressRoundRobinPlayerTurnTicker: function () {
     var next = (this.currentPlayerIndexTurn + 1) % _.size(this.turns);
 
@@ -85,6 +94,18 @@ HistorySchema.methods = {
     });
 
     return turns;
+  },
+  //For PlayByMail
+  getPlayersThatHaveNotPlayedTheCurrentRound: function () {
+    var array = [];
+
+    _.each(this.getPlayersTurnStatus(), function (status, playerRel) {
+      if (!status) {
+        array.push(playerRel);
+      }
+    });
+
+    return array;
   },
 
   addMetaDataToActionQ: function (data, actionNumber, roundNumber) {
