@@ -41,7 +41,6 @@ HistorySchema.statics.createQ = function (game) {
 
 HistorySchema.methods = {
   addPlayerTurnAndSaveQ: function (player, turn) {
-    console.log('here ohh ' + player + '  ' + turn + ' wtf')
     turn = turn || {};
     turn.dateSubmitted = new Date();
     var thisHistory = this;
@@ -108,7 +107,7 @@ HistorySchema.methods = {
     return array;
   },
 
-  addMetaDataToActionQ: function (data, actionNumber, roundNumber) {
+  saveMetaDataToActionQ: function (data, actionNumber, roundNumber) {
     roundNumber = roundNumber || this.currentRound;
     var action = this.turns['p1'][roundNumber - 1].actions[actionNumber];
     action.metadata = data;

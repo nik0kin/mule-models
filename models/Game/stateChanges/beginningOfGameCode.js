@@ -132,10 +132,11 @@ exports.startGameQ = function (game) {
         return foundGameBoard.saveQ();
       })
       .then(function (foundGameBoard) {
-        // TODO hacky again :(
-        console.log('hacking hard here ' + foundGameBoard.ruleBundle.name)
-        if (foundGameBoard.ruleBundle.name === 'MuleSprawl') {
-          var ruleBundleGameStartQ = require('mule-rules/bundles/mulesprawl/gameStart');
+        console.log('calling gameStart ' + foundGameBoard.ruleBundle.name)
+        var MuleRules = require('mule-rules');
+        console.log(MuleRules);
+        var ruleBundleGameStartQ = MuleRules.getBundleCode(foundGameBoard.ruleBundle.name).gameStart;
+        if (ruleBundleGameStartQ) {
           return ruleBundleGameStartQ(foundGameBoard);
         } else
           return Q(foundGameBoard);
