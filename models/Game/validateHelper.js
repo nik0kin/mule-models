@@ -5,7 +5,7 @@
  */
  
 var MAX_GAMENAME_LENGTH = 75,
-  MIN_TIMER_LENGTH = 30, // seconds
+  MIN_TIMER_LENGTH = 15, // seconds
   MAX_TIMER_LENGTH = 7 * 24 * 60 * 60; // a week
  
 var _ = require('lodash');
