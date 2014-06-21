@@ -32,6 +32,7 @@ HistorySchema.statics.createQ = function (game) {
     newHistory.turns[key] = [];
     newHistory.turnOrder.push(key);
   });
+  newHistory.turns['meta'] = [];
 
   newHistory.markModified('turns');
   newHistory.markModified('turnOrder');
@@ -47,7 +48,7 @@ HistorySchema.methods = {
     var players = _.isArray(player) ? player : [player];
     _.each(players, function (playerRel) {
       thisHistory.turns[playerRel][thisHistory.currentRound - 1] = turn;
-      console.log('saving ' + playerRel + '\'s turn ' + turn);
+      console.log('saving ' + playerRel + '\'s turn ' + turn + ' [' + (thisHistory.currentRound - 1) + ']');
     });
 
     this.markModified('turns');
@@ -59,8 +60,9 @@ HistorySchema.methods = {
   getPlayersTurnStatus: function () {
     var stati = {},
       currentRound = this.currentRound;
-    _.each(this.turns, function (value, key) {
-      stati[key] = value[currentRound - 1] ? true : false;
+    _.each(this.turns, function (turn, playerRelId) {
+      if (playerRelId === 'meta') return;
+      stati[playerRelId] = turn[currentRound - 1] ? true : false;
     });
 
     return stati;
@@ -78,7 +80,7 @@ HistorySchema.methods = {
     return this.turnOrder[this.currentPlayerIndexTurn];
   },
   progressRoundRobinPlayerTurnTicker: function () {
-    var next = (this.currentPlayerIndexTurn + 1) % _.size(this.turns);
+    var next = (this.currentPlayerIndexTurn + 1) % _.size(this.turns - 1);
 
     this.currentPlayerIndexTurn = next;
   },
@@ -89,6 +91,7 @@ HistorySchema.methods = {
     var turns = {};
 
     _.each(this.turns, function (playersTurns, playerRelId) {
+      if (playerRelId === 'meta') return;
       turns[playerRelId] = playersTurns[turnNumber - 1];
     });
 
@@ -107,9 +110,9 @@ HistorySchema.methods = {
     return array;
   },
 
-  saveMetaDataToActionQ: function (data, actionNumber, roundNumber) {
+  saveMetaDataToActionQ: function (data, playerRel, actionNumber, roundNumber) {
     roundNumber = roundNumber || this.currentRound;
-    var action = this.turns['p1'][roundNumber - 1].actions[actionNumber];
+    var action = this.turns[playerRel][roundNumber - 1].actions[actionNumber];
     action.metadata = data;
 console.log('added metadata')
 console.log(data)
