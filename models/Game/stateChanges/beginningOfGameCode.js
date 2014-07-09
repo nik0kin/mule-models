@@ -134,12 +134,13 @@ exports.startGameQ = function (game) {
       .then(function (foundGameBoard) {
         console.log('calling gameStart ' + foundGameBoard.ruleBundle.name)
         var MuleRules = require('mule-rules');
-        console.log(MuleRules);
+        console.log(MuleRules.getBundleCode(foundGameBoard.ruleBundle.name));
         var ruleBundleGameStartQ = MuleRules.getBundleCode(foundGameBoard.ruleBundle.name).gameStart;
         if (ruleBundleGameStartQ) {
           return ruleBundleGameStartQ(foundGameBoard);
-        } else
+        } else {
           return Q(foundGameBoard);
+        }
       })
       .then(function (modifiedGameBoard) {
         return game.setTurnTimerQ();

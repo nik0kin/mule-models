@@ -93,7 +93,7 @@ GameSchema.methods = {
       this.nextTurnTime = new Date(currentDate.valueOf() + this.turnTimeLimit*1000);
       return this.saveQ();
     } else {
-      Q(this);
+      return Q(this);
     }
   }
 };
