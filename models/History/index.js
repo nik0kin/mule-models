@@ -80,7 +80,7 @@ HistorySchema.methods = {
     return this.turnOrder[this.currentPlayerIndexTurn];
   },
   progressRoundRobinPlayerTurnTicker: function () {
-    var next = (this.currentPlayerIndexTurn + 1) % _.size(this.turns - 1);
+    var next = (this.currentPlayerIndexTurn + 1) % _.size(this.turnOrder);
 
     this.currentPlayerIndexTurn = next;
   },

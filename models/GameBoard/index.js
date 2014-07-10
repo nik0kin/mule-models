@@ -23,7 +23,7 @@ var GameBoardSchema = new Schema({
   spaces : [{type: String, ref: 'SpaceState'}],
   pieces : [{type: String, ref: 'PieceState'}],
 
-  globalVariables: {},
+  globalVariables: {type: Schema.Types.Mixed, default: {}},
   playerVariables: {type: Schema.Types.Mixed, default: {}},
 
   history: {type: String, ref: 'History'}
