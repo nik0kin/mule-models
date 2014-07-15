@@ -8,6 +8,7 @@ module.exports = {
 
   Game: require('./models/Game'),
   GameBoard: require('./models/GameBoard'),
+  GameState: require('./models/GameState'),
 
   History: require('./models/History'),
 

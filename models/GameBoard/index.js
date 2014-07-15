@@ -18,16 +18,10 @@ var GameBoardSchema = new Schema({
   },
 
   boardType: { type: String, default: 'default' },
-  board: {},
+  board: {}, //boardDef
 
-  spaces : [{type: String, ref: 'SpaceState'}],
-  pieces : [{type: String, ref: 'PieceState'}],
-
-  globalVariables: {type: Schema.Types.Mixed, default: {}},
-  playerVariables: {type: Schema.Types.Mixed, default: {}},
-
-  history: {type: String, ref: 'History'}
-
+  history: {type: String, ref: 'History'},
+  gameState : {type: String, ref: 'GameState'}
 });
 
 /**
@@ -52,15 +46,19 @@ GameBoardSchema.methods = {
 };
 
 GameBoardSchema.statics.findByIdWithPopulatedStatesQ = function (gameBoardId) {
-  var GameBoard = this;
+  var GameBoard = this,
+    GameState = require('../GameState').Model,
+    _gameBoard;
 
   return GameBoard.findByIdQ(gameBoardId)
     .then(function (gameBoard) {
-      return gameBoard.populateQ('spaces');
+      _gameBoard = gameBoard;
+      return GameState.findByIdWithPopulatedStatesQ(gameBoard.gameState);
     })
-    .then(function (gameBoard) {
-      return gameBoard.populateQ('pieces');
-    })
+    .then(function (gameState) {
+      _gameBoard.gameState = gameState;
+      return _gameBoard;
+    });
 };
 
 exports.Schema = GameBoardSchema;

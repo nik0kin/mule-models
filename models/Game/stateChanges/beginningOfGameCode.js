@@ -8,6 +8,7 @@ var Q = require('q'),
 
 exports.startGameQ = function (game) {
   var GameBoard = require('mule-models').GameBoard.Model, // TODO why can I put this higher than this scope?
+    GameState = require('mule-models').GameState.Model,
     RuleBundle = require('mule-models').RuleBundle.Model,
     History = require('mule-models').History.Model,
     PieceState = require('mule-models').PieceState.Model,
@@ -17,7 +18,9 @@ exports.startGameQ = function (game) {
     var newSpacesIds = [],
       newPieceIds = [];
 
-    var currentRuleBundle;
+    var currentRuleBundle,
+      _gameBoard,
+      _gameState;
 
     RuleBundle.findByIdQ(game.ruleBundle.id)
       .then(function (foundRuleBundle) {
@@ -26,22 +29,28 @@ exports.startGameQ = function (game) {
         return GameBoard.findByIdQ(game.gameBoard);
       })
       .then(function (foundGameBoard) {
+        _gameBoard = foundGameBoard;
+      })
+      .then(function () {
         var spacesMasterOptions = {
-          'built': foundGameBoard.board,
+          'built': _gameBoard.board,
           'static': currentRuleBundle.rules.board
         };
-        var spacesMaster = spacesMasterOptions[foundGameBoard.boardType];
+        var spacesMaster = spacesMasterOptions[_gameBoard.boardType]; //boardDef?
 
         var createPromises = [];
 
+        // GAME STATE
+        var newGameState = new GameState({});
+
         // DEFINE PLAYER VARS
-        foundGameBoard.playerVariables = {};
+        newGameState.playerVariables = {};
         _.each(game.players, function (value, key) {
-          foundGameBoard.playerVariables[key] = {
+          newGameState.playerVariables[key] = {
             lose: false
           };
         });
-        foundGameBoard.markModified('playerVariables');
+        newGameState.markModified('playerVariables');
 
         // CREATE SPACES
         _.each(spacesMaster, function (value, key) {
@@ -78,7 +87,7 @@ exports.startGameQ = function (game) {
             switch(startingPiecesTypeKey) {
               case 'each':
                 //make one for each player (gotta check how many players)
-                _.each(foundGameBoard.playerVariables, function (value, key) {
+                _.each(newGameState.playerVariables, function (value, key) {
                   var p = _.clone(params);
                   p.id = pieceId++;
                   p.ownerId = key;
@@ -89,7 +98,7 @@ exports.startGameQ = function (game) {
                 break;
               case 'each-random-location':
                 //make one for each player (gotta check how many players) in a random location (of the available spaces)
-                _.each(foundGameBoard.playerVariables, function (value, key) {
+                _.each(newGameState.playerVariables, function (value, key) {
                   var randomLoc = spacesMaster[Math.floor(Math.random() * (spacesMaster.length + 1))].id;
                   var p = _.clone(params);
                   p.id = pieceId++;
@@ -110,43 +119,42 @@ exports.startGameQ = function (game) {
           });
         });
 
-        return Q.all(createPromises)
-          .then (function () {
-          return Q(foundGameBoard);
-        });
+        _gameState = newGameState;
+        return Q.all(createPromises);
       })
-      .then(function (foundGameBoard) {
-        return History.createQ(game)
-          .then(function (newHistory) {
-            foundGameBoard.history = newHistory._id;
-            return Q(foundGameBoard);
-          });
-      })
-      .then(function (foundGameBoard) {
-        foundGameBoard.spaces = newSpacesIds;
-        foundGameBoard.markModified('spaces');
+      .then(function () {
+        _gameState.spaces = newSpacesIds;
+        _gameState.markModified('spaces');
 
-        foundGameBoard.pieces = newPieceIds;
-        foundGameBoard.markModified('pieces');
+        _gameState.pieces = newPieceIds;
+        _gameState.markModified('pieces');
 
-        return foundGameBoard.saveQ();
+        return _gameState.saveQ();
       })
-      .then(function (foundGameBoard) {
-        console.log('calling gameStart ' + foundGameBoard.ruleBundle.name)
+      .then(function (savedGameState) {
+        console.log('calling gameStart ' + _gameBoard.ruleBundle.name)
         var MuleRules = require('mule-rules');
-        console.log(MuleRules.getBundleCode(foundGameBoard.ruleBundle.name));
-        var ruleBundleGameStartQ = MuleRules.getBundleCode(foundGameBoard.ruleBundle.name).gameStart;
+        console.log(MuleRules.getBundleCode(_gameBoard.ruleBundle.name));
+        var ruleBundleGameStartQ = MuleRules.getBundleCode(_gameBoard.ruleBundle.name).gameStart;
         if (ruleBundleGameStartQ) {
-          return ruleBundleGameStartQ(foundGameBoard);
+          return ruleBundleGameStartQ(savedGameState);
         } else {
-          return Q(foundGameBoard);
+          return Q(savedGameState);
         }
       })
-      .then(function (modifiedGameBoard) {
+      .then(function (savedGameState) {
+        return History.createQ(game)
+      })
+      .then(function (newHistory) {
+        _gameBoard.history = newHistory._id;
+        _gameBoard.gameState = _gameState._id;
+        return _gameBoard.saveQ();
+      })
+      .then(function (savedGameBoardState) {
         return game.setTurnTimerQ();
       })
-      .then(function (modifiedGame) {
-        resolve(modifiedGame);
+      .then(function (savedGame) {
+        resolve(savedGame);
       })
       .fail(function (err) {
         console.log('startGameQ failed: ');
