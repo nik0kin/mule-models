@@ -4,77 +4,191 @@ var mongoose = global.getMongoose(),
   _ = require('lodash'),
   winston = require('winston');
 
-var ActionSchema = new Schema({
-  type: {type: String},
-  params: {type: Schema.Types.Mixed}
-});
-
-var TurnSchema = new Schema({
-  dateSubmitted: {type: Date},
-  actions: []
-});
-
 var HistorySchema = new Schema({
+  currentTurn: { type: Number, default: 1},
   currentRound: { type: Number, default: 1},
+
+  // re-saved here for efficiency
+  gameId: {type: Schema.Types.ObjectId, ref: 'Game'},
+  turnSubmitStyle: {type: String, default: 'default'},
 
   turnOrder: [{type: String}],
   currentPlayerIndexTurn: { type: Number, default: 0},               // whos turn is it?  (if roundRobin)
 
-  turns: { type: Schema.Types.Mixed, default: {} }
+  /* if game.turnSubmitStyle === 'roundRobin'
+        turns looks like: [['turn1id', 'turn2id', 'turn3id'],['turn4id', 'turn5id', 'turn6id']]
+        each turn has {meta: singleturn, p1: singleturn}
+     if game.turnSubmitStyle === 'playByMail'
+        turns looks like: ['turn1id', 'turn2id']
+        each turn has {meta: singleturn, p1: singleturn, p2: singleturn, p3: singleturn}
+  */
+  turns: []
 });
 
-HistorySchema.statics.createQ = function (game) {
+HistorySchema.statics.createQ = function (game, turnSubmitStyle) {
   var History = this;
 
   var newHistory = new History();
 
   _.each(game.players, function (value, key) {
-    newHistory.turns[key] = [];
     newHistory.turnOrder.push(key);
   });
-  newHistory.turns['meta'] = [];
 
-  newHistory.markModified('turns');
   newHistory.markModified('turnOrder');
+
+  newHistory.gameId = game._id;
+  newHistory.turnSubmitStyle = turnSubmitStyle;
 
   return newHistory.saveQ();
 };
 
+HistorySchema.statics.findFullByIdQ = function (historyId) {
+  var History = this,
+    Turn = require('../Turn').Model,
+   _history;
+  return History.findByIdQ(historyId)
+    .then(function (history) {
+      var promises = [];
+
+      _.each(history.turns, function (roundOrTurnId, roundNumber) {
+        var p = history.getRoundTurnsQ(roundNumber + 1)
+          .then(function (roundTurns) {
+            if (history.turnSubmitStyle === 'playByMail') roundTurns = roundTurns[0];
+            history.turns[roundNumber] = roundTurns;
+          });
+
+        promises.push(p);
+      });
+
+      _history = history;
+      return Q.all(promises)
+        .then(function () {
+          return _history;
+        })
+    });
+};
+
 HistorySchema.methods = {
-  addPlayerTurnAndSaveQ: function (player, turn) {
-    turn = turn || {};
-    turn.dateSubmitted = new Date();
+  incrementRoundQ: function () { // should we ever let something out side this model to change the round number
+    this.currentRound++;
+    return this.saveQ();
+  },
+
+  addRoundRobinPlayerTurnAndSaveQ: function (playerRel, singleTurn) {
+    var Turn = require('../Turn').Model,
+      thisHistory = this,
+      newTurnParams = {
+        gameId: this.gameId,
+        newTurnParams: this.currentTurn,
+        playerRel: playerRel,
+        singleTurn: singleTurn
+      };
+
+
+    return Turn.statics.createQ(newTurnParams)
+      .then(function (turn) {
+        // add id reference to this.turns
+        var roundTurns = thisHistory.turns[thisHistory.currentRound - 1];
+        if (!roundTurns) {
+          roundTurns = [];
+        }
+        roundTurns[getPlayersOrderNumber(playerRel)] = turn._id;
+        thisHistory.turns[thisHistory.currentRound - 1] = roundTurns;
+        thisHistory.markModified('turns');
+
+        thisHistory.currentTurn++;
+        return thisHistory.saveQ();
+      });
+  },
+  //player maybe be one or an array
+  addPlayByMailPlayerTurnAndSaveQ: function (player, singleTurn) {
+    var Turn = require('../Turn').Model,
+      thisHistory = this,
+      players = _.isArray(player) ? player : [player],
+      singleTurn = singleTurn || {
+        actions: []
+      },
+      newTurnParams = {
+        gameId: this.gameId,
+        turnNumber: this.currentTurn,
+        playerRel: players,
+        singleTurn: singleTurn
+      };
+
+    return Turn.createOrAddQ(newTurnParams)
+      .then(function (turn) {
+        // add id reference to this.turns
+        //  - it should just be resaving ths same id, all but the first time
+        thisHistory.turns[thisHistory.currentRound - 1] = turn._id;
+        thisHistory.markModified('turns');
+
+        return thisHistory.saveQ();
+      });
+  },
+  addRoundRobinMetaAndSaveQ: function (metaTurn) {
+    return this.addMetaToLastAddedTurnAndSaveQ(metaTurn);
+  },
+  addPlayByMailMetaAndSaveQ: function (metaTurn) {
+    return this.addMetaToLastAddedTurnAndSaveQ(metaTurn);
+  },
+  addMetaToLastAddedTurnAndSaveQ: function (metaTurn) {
+    var Turn = require('../Turn').Model,
+      thisHistory = this;
+
+    return this.getLastAddedTurnQ()
+      .then(function (turn) {
+        if (turn) {
+          return turn.saveMetaTurnQ(metaTurn);
+        } else {
+          var newTurnParams = {
+            gameId: thisHistory.gameId,
+            turnNumber: thisHistory.currentTurn,
+            metaTurn: metaTurn
+          };
+          return Turn.createQ(newTurnParams);
+        }
+      })
+      .then(function (turn) {
+        thisHistory.currentTurn++;
+        return thisHistory.saveQ();
+      });
+  },
+
+  getCanAdvancePlayByMailTurnQ: function () {
+    return this.getLastAddedTurnQ()
+      .then(function (turn) {
+        if (!turn) {
+          return Q(false);
+        }
+        return Q(turn.getCanAdvancePlayByMailTurn());
+      });
+  },
+
+  ///////// TURN ORDER STUFF /////////////
+  getPlayersTurnStatusQ: function () {
     var thisHistory = this;
-    var players = _.isArray(player) ? player : [player];
-    _.each(players, function (playerRel) {
-      thisHistory.turns[playerRel][thisHistory.currentRound - 1] = turn;
-      console.log('saving ' + playerRel + '\'s turn ' + turn + ' [' + (thisHistory.currentRound - 1) + ']');
-    });
 
-    this.markModified('turns');
-    return this.saveQ()
-  },
-  getPlayerTurn: function (player, turnNumber) {
-    return this.turns[player][turnNumber - 1];
-  },
-  getPlayersTurnStatus: function () {
-    var stati = {},
-      currentRound = this.currentRound;
-    _.each(this.turns, function (turn, playerRelId) {
-      if (playerRelId === 'meta') return;
-      stati[playerRelId] = turn[currentRound - 1] ? true : false;
-    });
+    if (this.turnSubmitStyle === 'roundRobin') {
+      var stati = {};
+      _.each(this.turnOrder, function (playerRel, orderNumber) {
+        stati[playerRel] = !!this.turns[this.currentRound - 1][orderNumber];
+      });
 
-    return stati;
-  },
-  getCanAdvancePlayByMailRound: function () {
-    var canAdvance = true;
-
-    _.each(this.getPlayersTurnStatus(), function (value) {
-      if (!value) canAdvance = false;
-    });
-
-    return canAdvance;
+      return Q(stati);
+    } else if (this.turnSubmitStyle === 'playByMail') {
+      var id = this.turns[this.currentRound - 1];
+      if (!id) {
+        var stati = {};
+        _.each(this.turnOrder, function (playerRel, order) {
+          stati[playerRel] = false;
+        });
+        return Q(stati);
+      }
+      return Turn.findByIdQ(id)
+        .then(function (turn) {
+          return Q(turn.getPlayByMailPlayersTurnStatus(thisHistory.getAllPlayersArray()));
+        });
+    }
   },
   getRoundRobinNextPlayerRel: function () {
     return this.turnOrder[this.currentPlayerIndexTurn];
@@ -84,40 +198,72 @@ HistorySchema.methods = {
 
     this.currentPlayerIndexTurn = next;
   },
+  // starting with 0
+  getPlayersOrderNumber: function (playerRel) {
+    return _.invert(this.turnOrder)[playerRel]; // EFF cache the inverted
+  },
   isPlayersTurn: function (player) {
     return _.isEqual(player, this.turnOrder[this.currentPlayerIndexTurn]);
   },
-  getRoundTurns: function (turnNumber) {
-    var turns = {};
+  getLastAddedTurnQ: function () {
+    var Turn = require('../Turn').Model;
+    if (this.turnSubmitStyle === 'roundRobin') {
+      var roundTurnsIds = this.turns[this.currentRound - 1];
+      var id = roundTurnsIds[_.size(roundTurnsIds)-1];
+      return Turn.findByIdQ(id);
+    } else if (this.turnSubmitStyle === 'playByMail') {
+      return Turn.findByIdQ(this.turns[this.currentRound - 1]);
+    }
+  },
+  getRoundTurnsQ: function (roundNumber) {
+    var Turn = require('../Turn').Model,
+      promises = [];
 
-    _.each(this.turns, function (playersTurns, playerRelId) {
-      if (playerRelId === 'meta') return;
-      turns[playerRelId] = playersTurns[turnNumber - 1];
-    });
-
-    return turns;
+    if (this.turnSubmitStyle === 'roundRobin') {
+      _.each(this.turns[roundNumber - 1], function (turnId) {
+        promises.push(Turn.findByIdQ(turnId));
+      });
+      return Q.all(promises);
+    } else if (this.turnSubmitStyle === 'playByMail') {
+      return Turn.findByIdQ(this.turns[roundNumber - 1])
+        .then(function (result) {
+          return Q([result]);
+        });
+    }
   },
   //For PlayByMail
-  getPlayersThatHaveNotPlayedTheCurrentRound: function () {
-    var array = [];
-
-    _.each(this.getPlayersTurnStatus(), function (status, playerRel) {
-      if (!status) {
-        array.push(playerRel);
-      }
-    });
-
-    return array;
+  getPlayersThatHaveNotPlayedTheCurrentTurnQ: function () {
+    var thisHistory = this,
+      allPlayers = thisHistory.getAllPlayersArray();
+    return thisHistory.getLastAddedTurnQ()
+      .then(function (turn) {
+        if (!turn) {
+          return Q(allPlayers);
+        }
+        return Q(turn.getPlayersThatHaveNotPlayedTheCurrentTurn(allPlayers));
+      });
+  },
+  getAllPlayersArray: function () {
+        // using map instead of _.values, because it messes up[] (something with mongoose)
+    return _.map(this.turnOrder, function (v, k) { return v;})
   },
 
-  saveMetaDataToActionQ: function (data, playerRel, actionNumber, roundNumber) {
-    roundNumber = roundNumber || this.currentRound;
-    var action = this.turns[playerRel][roundNumber - 1].actions[actionNumber];
-    action.metadata = data;
-console.log('added metadata')
-console.log(data)
-    this.markModified('turns');
-    return this.saveQ();
+  saveMetaDataToActionQ: function (playerRel, actionNumber, actionMetaData, roundNumber) {
+    var Turn = require('../Turn').Model;
+    //  turnId,
+    //  roundNumber = roundNumber || this.currentRound;
+
+    // EFF this function is called in a loop, we dont need to load that turn over and over again
+    /*if (this.turnSubmitStyle === 'roundRobin') {
+      turnId = this.turns[roundNumber - 1][this.getPlayersOrderNumber(playerRel)];
+    } else if (this.turnSubmitStyle === 'playByMail') {
+      turnId = this.turns[roundNumber - 1];
+    } */
+
+    return this.getLastAddedTurnQ() //Turn.findByIdQ(turnId)
+      .then(function (turn) {
+        return turn.saveMetaDataToActionQ(playerRel, actionNumber, actionMetaData);
+      });
   }
 
 };

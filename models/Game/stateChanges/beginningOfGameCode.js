@@ -143,7 +143,7 @@ exports.startGameQ = function (game) {
         }
       })
       .then(function (savedGameState) {
-        return History.createQ(game)
+        return History.createQ(game, currentRuleBundle.turnSubmitStyle);
       })
       .then(function (newHistory) {
         _gameBoard.history = newHistory._id;

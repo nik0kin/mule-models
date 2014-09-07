@@ -11,6 +11,7 @@ module.exports = {
   GameState: require('./models/GameState'),
 
   History: require('./models/History'),
+  Turn: require('./models/Turn'),
 
   PieceState: require('./models/PieceState'),
   SpaceState: require('./models/SpaceState')
