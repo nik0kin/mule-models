@@ -39,6 +39,10 @@ HistorySchema.statics.createQ = function (game, turnSubmitStyle) {
   newHistory.gameId = game._id;
   newHistory.turnSubmitStyle = turnSubmitStyle;
 
+  if (turnSubmitStyle === 'roundRobin') {
+    newHistory.turns.push([]);
+  }
+
   return newHistory.saveQ();
 };
 
@@ -71,6 +75,10 @@ HistorySchema.statics.findFullByIdQ = function (historyId) {
 HistorySchema.methods = {
   incrementRoundQ: function () { // should we ever let something out side this model to change the round number
     this.currentRound++;
+    console.log('INCREMENTING ROUND');
+    if (this.turnSubmitStyle === 'roundRobin') {
+      this.turns.push([]);
+    }
     return this.saveQ();
   },
 
@@ -79,24 +87,23 @@ HistorySchema.methods = {
       thisHistory = this,
       newTurnParams = {
         gameId: this.gameId,
-        newTurnParams: this.currentTurn,
+        turnNumber: this.currentTurn,
         playerRel: playerRel,
         singleTurn: singleTurn
       };
 
 
-    return Turn.statics.createQ(newTurnParams)
+    return Turn.createQ(newTurnParams)
       .then(function (turn) {
         // add id reference to this.turns
         var roundTurns = thisHistory.turns[thisHistory.currentRound - 1];
-        if (!roundTurns) {
-          roundTurns = [];
+        if (!roundTurns) { // incrementRound should take care of this
+          roundTurns.push([]);
         }
-        roundTurns[getPlayersOrderNumber(playerRel)] = turn._id;
+        roundTurns[thisHistory.getPlayersOrderNumber(playerRel)] = turn._id;
         thisHistory.turns[thisHistory.currentRound - 1] = roundTurns;
         thisHistory.markModified('turns');
 
-        thisHistory.currentTurn++;
         return thisHistory.saveQ();
       });
   },
@@ -153,14 +160,25 @@ HistorySchema.methods = {
         return thisHistory.saveQ();
       });
   },
-
+  getCanAdvanceRoundRobinTurnQ: function () {
+    var canAdvance = true,
+      thisHistory = this;
+    return thisHistory.getPlayersTurnStatusQ()
+      .then(function (stati) {
+        _.each(stati, function (played, playerRel) {
+          if (!played) canAdvance = false;
+        });
+        return Q(canAdvance);
+      });
+  },
   getCanAdvancePlayByMailTurnQ: function () {
-    return this.getLastAddedTurnQ()
+    var thisHistory = this;
+    return thisHistory.getLastAddedTurnQ()
       .then(function (turn) {
         if (!turn) {
           return Q(false);
         }
-        return Q(turn.getCanAdvancePlayByMailTurn());
+        return Q(turn.getCanAdvancePlayByMailTurn(thisHistory.getAllPlayersArray()));
       });
   },
 
@@ -168,12 +186,11 @@ HistorySchema.methods = {
   getPlayersTurnStatusQ: function () {
     var thisHistory = this;
 
-    if (this.turnSubmitStyle === 'roundRobin') {
+    if (thisHistory.turnSubmitStyle === 'roundRobin') {
       var stati = {};
-      _.each(this.turnOrder, function (playerRel, orderNumber) {
-        stati[playerRel] = !!this.turns[this.currentRound - 1][orderNumber];
+      _.each(thisHistory.turnOrder, function (playerRel, orderNumber) {
+        stati[playerRel] = !!thisHistory.turns[thisHistory.currentRound - 1][orderNumber];
       });
-
       return Q(stati);
     } else if (this.turnSubmitStyle === 'playByMail') {
       var id = this.turns[this.currentRound - 1];

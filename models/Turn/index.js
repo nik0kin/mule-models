@@ -110,10 +110,10 @@ console.log(actionMetaData)
 
   getCanAdvancePlayByMailTurn: function (playerRels) {
     var canAdvance = true;
-      _.each(this.getPlayByMailPlayersTurnStatus(playerRels), function (value) {
-        if (!value) canAdvance = false;
-      });
-      return canAdvance;
+    _.each(this.getPlayByMailPlayersTurnStatus(playerRels), function (value) {
+      if (!value) canAdvance = false;
+    });
+    return canAdvance;
   },
   // out of playerRels[]
   getPlayersThatHaveNotPlayedTheCurrentTurn: function (playerRels) {
