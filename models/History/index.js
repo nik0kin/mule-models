@@ -184,7 +184,8 @@ HistorySchema.methods = {
 
   ///////// TURN ORDER STUFF /////////////
   getPlayersTurnStatusQ: function () {
-    var thisHistory = this;
+    var thisHistory = this,
+      Turn = require('../Turn').Model;
 
     if (thisHistory.turnSubmitStyle === 'roundRobin') {
       var stati = {};
@@ -193,15 +194,15 @@ HistorySchema.methods = {
       });
       return Q(stati);
     } else if (this.turnSubmitStyle === 'playByMail') {
-      var id = this.turns[this.currentRound - 1];
-      if (!id) {
+      var currentTurnId = this.turns[this.currentRound - 1];
+      if (!currentTurnId) {
         var stati = {};
         _.each(this.turnOrder, function (playerRel, order) {
           stati[playerRel] = false;
         });
         return Q(stati);
       }
-      return Turn.findByIdQ(id)
+      return Turn.findByIdQ(currentTurnId)
         .then(function (turn) {
           return Q(turn.getPlayByMailPlayersTurnStatus(thisHistory.getAllPlayersArray()));
         });
