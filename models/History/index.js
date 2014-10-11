@@ -5,6 +5,8 @@ var mongoose = global.getMongoose(),
   winston = require('winston');
 
 var HistorySchema = new Schema({
+  winner: {type: String}, //TODO handling winCondition isnt perfect yet
+
   currentTurn: { type: Number, default: 1},
   currentRound: { type: Number, default: 1},
 
@@ -69,6 +71,16 @@ HistorySchema.statics.findFullByIdQ = function (historyId) {
         .then(function () {
           return _history;
         })
+    });
+};
+
+HistorySchema.statics.setWinnerAndSaveQ = function (historyId, winner) {
+  var History = this;
+
+  return History.findByIdQ(historyId)
+    .then(function (history) {
+      history.winner = winner;
+      return history.saveQ();
     });
 };
 

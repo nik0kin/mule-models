@@ -95,6 +95,21 @@ GameSchema.methods = {
     } else {
       return Q(this);
     }
+  },
+
+  setWinnerAndSaveQ: function (winnerPlayerRel) {
+    _.each(this.players, function (playerInfo, player) {
+      if (winnerPlayerRel === player) {
+        playerInfo.playerStatus = 'won';
+      } else {
+        playerInfo.playerStatus = 'lost';
+      }
+    });
+    this.markModified('players');
+    this.gameStatus = 'finished';
+
+    console.log(winnerPlayerRel + ' won gameId: ' + this._id);
+    return this.saveQ();
   }
 };
 
