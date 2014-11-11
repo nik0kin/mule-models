@@ -8,8 +8,7 @@ var Q = require('q'),
   _ = require('lodash'),
   winston = require('winston');
 
-var gameStatusUtils = require('mule-utils/gameStatusUtils'),
-  startGameCode = require('./beginningOfGameCode');
+var gameStatusUtils = require('mule-utils/gameStatusUtils');
 
 exports.changeStateQCallback = function () {
   return function (newState) {
@@ -21,30 +20,10 @@ exports.changeStateQCallback = function () {
       if (thisGame.playersCount < 1)
         return reject('Empty Game');
 
-      var promise = Q(thisGame);
+      thisGame.gameStatus = newState;
 
-      switch (newState) {
-        case 'open' :
-          break;
-        case 'inProgress' :
-          thisGame.gameStatus = 'inProgress';
-          promise = startGameCode.startGameQ(thisGame);
-          break;
-        case 'finished' :
-          break;
-      }
-
-      promise
-        .then(function (game) {
-          return game.saveQ();
-        })
-        .then(function (game) {
-          winston.info('game[' +  game._id + '] State changed to ' + game.gameStatus);
-          resolve(game);
-        })
-        .fail(function (err) {
-          reject(err);
-        });
+      winston.info('game[' + thisGame._id + '] State changed to ' + thisGame.gameStatus);
+      resolve(thisGame);
     });
   };
 };

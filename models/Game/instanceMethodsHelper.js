@@ -53,7 +53,7 @@ exports.joinGameQCallback = function () {
         resolve(result);
       };
 
-      //is the game full now? if it is, start it!
+      //is the game full now? if it is, change its state
       if (that.full) {
         that.changeStateQ('inProgress')
           .done(function () {
