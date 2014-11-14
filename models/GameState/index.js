@@ -28,14 +28,17 @@ GameStateSchema.methods = {
 
 GameStateSchema.statics.findByIdWithPopulatedStatesQ = function (gameStateId) {
   var GameState = this;
-console.log(gameStateId)
+console.log('findByIdWithPopulatedStatesQ: '+ gameStateId);
   return GameState.findByIdQ(gameStateId)
     .then(function (gameState) {
-      return gameState.populateQ('spaces');
-    })
-    .then(function (gameState) {
-      return gameState.populateQ('pieces');
-    })
+      if (gameState) {
+        return gameState.populateQ('spaces')
+          .then(function (gameState) {
+            return gameState.populateQ('pieces');
+          });
+      }
+    });
+
 };
 
 exports.Schema = GameStateSchema;
