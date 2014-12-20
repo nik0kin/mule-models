@@ -4,7 +4,7 @@ var Schema = mongoose.Schema;
 
 var GameStateSchema = new Schema({
   spaces : [{type: String, ref: 'SpaceState'}],
-  pieces : [{type: String, ref: 'PieceState'}],
+  pieces : [{type: Schema.ObjectId, ref: 'PieceState'}],
 
   globalVariables: {type: Schema.Types.Mixed, default: {}},
   playerVariables: {type: Schema.Types.Mixed, default: {}}

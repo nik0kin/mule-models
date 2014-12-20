@@ -11,6 +11,9 @@ require ('../server.js');
 var Game = require('../models/Game/index').Model,
   User = require('../models/User').Model,
   GameBoard = require('../models/GameBoard/index').Model,
+  GameState = require('../models/GameState/index').Model,
+  PieceState = require('../models/PieceState/index').Model,
+  SpaceState = require('../models/SpaceState/index').Model,
   RuleBundle = require('../models/RuleBundle/index').Model;
 
 
@@ -19,6 +22,9 @@ exports.clearAllModelsCollectionQ = function () {
     User.removeQ({}),
     Game.removeQ({}),
     GameBoard.removeQ({}),
+    GameState.removeQ({}),
+    PieceState.removeQ({}),
+    SpaceState.removeQ({}),
     RuleBundle.removeQ({})
   ]);
 };
@@ -33,7 +39,14 @@ exports.clearAllModelsCollectionCallback = function (done) {
 };
 
 exports.clearUsersAndGamesCollectionQ = function () {
-  return Q.all([User.removeQ({}), Game.removeQ({}), GameBoard.removeQ({})]);
+  return Q.all([
+    User.removeQ({}),
+    Game.removeQ({}),
+    GameBoard.removeQ({}),
+    GameState.removeQ({}),
+    PieceState.removeQ({}),
+    SpaceState.removeQ({})
+  ]);
 };
 exports.clearUsersAndGamesCollection = function (done) {
   exports.clearUsersAndGamesCollectionQ()
