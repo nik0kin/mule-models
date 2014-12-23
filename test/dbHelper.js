@@ -11,6 +11,7 @@ require ('../server.js');
 var Game = require('../models/Game/index').Model,
   User = require('../models/User').Model,
   GameBoard = require('../models/GameBoard/index').Model,
+  History = require('../models/History').Model,
   GameState = require('../models/GameState/index').Model,
   PieceState = require('../models/PieceState/index').Model,
   SpaceState = require('../models/SpaceState/index').Model,
@@ -21,6 +22,7 @@ var clearGamesCollectionsQ = function () {
   return Q.all([
     Game.removeQ({}),
     GameBoard.removeQ({}),
+    History.removeQ({}),
     GameState.removeQ({}),
     PieceState.removeQ({}),
     SpaceState.removeQ({})
