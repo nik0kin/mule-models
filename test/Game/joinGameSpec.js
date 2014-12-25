@@ -48,7 +48,7 @@ describe('Models: ', function () {
 
     after(function (done) { dbHelper.clearUsersAndGamesCollection(done); });
 
-    describe('.joinGameQ(playerID)', function () {
+    describe('.joinGameQ(playerId)', function () {
       it('should update a empty Game with one more player', function (done) {
         ourGame.joinGameQ(ourPlayer)
           .done(function (value) {
@@ -77,7 +77,7 @@ describe('Models: ', function () {
                         should(result.players).ok;
                         should(_.size(result.players)).eql(2);
                         var keys = _.keys(result.players);
-                        should(result.players[keys[0]].playerID).not.eql(result.players[keys[1]].playerID);
+                        should(result.players[keys[0]].playerId).not.eql(result.players[keys[1]].playerId);
                         done();
                       }, testHelper.mochaError(done));
                   }, testHelper.mochaError(done));

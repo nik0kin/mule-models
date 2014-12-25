@@ -9,7 +9,7 @@ var Schema = mongoose.Schema;
 var validateHelp = require('./validateHelper');
 
 var GameBoardSchema = new Schema({
-  gameID : {type: Schema.Types.ObjectId}, //do i need this?
+  gameId : {type: Schema.Types.ObjectId}, //do i need this?
 
   ruleBundle : {
     type: Schema.Types.Mixed,

@@ -76,10 +76,10 @@ GameSchema.methods = {
   },
 
   //returns -1 if player is not in game
-  getPlayerPosition : function (playerID) {
+  getPlayerPosition : function (playerId) {
     var position = -1;
     _.each(this.players, function (value, key) {
-      if (_.isEqual('' + value.playerID, '' + playerID)) {
+      if (_.isEqual('' + value.playerId, '' + playerId)) {
         position = key;
       }
     });

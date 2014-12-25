@@ -33,7 +33,7 @@ exports.joinGameQCallback = function () {
 
       //make object
       var newPlayerGameInfo = { //aka piggie
-        "playerID" : player._id,
+        "playerId" : player._id,
         "playerStatus" : 'inGame'
       };
 

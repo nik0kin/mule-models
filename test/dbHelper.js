@@ -76,8 +76,8 @@ exports.addUserQ = function (userParameters) {
   return newUser.saveQ();
 };
 
-exports.getUserQ = function (userID) {
-  return User.findByIdQ(userID);
+exports.getUserQ = function (userId) {
+  return User.findByIdQ(userId);
 };
 
 
@@ -87,6 +87,6 @@ exports.addGameQ = function (createGameParameters, creator) {
   return newGame.saveQ();
 };
 
-exports.getGameQ = function (gameID) {
-  return Game.findByIdQ(gameID);
+exports.getGameQ = function (gameId) {
+  return Game.findByIdQ(gameId);
 };

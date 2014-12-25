@@ -34,14 +34,14 @@ var validateNumberOfPlayers = function (number) {
   return _.isNumber(number) && number >= 1;
 };
 
-//an object when every key contains an object with 'playerID' & 'playerStatus'
-// {playerID : 'DEFAULT_PIGGIE_ID', playerStatus : 'default'}
+//an object when every key contains an object with 'playerId' & 'playerStatus'
+// {playerId : 'DEFAULT_PIGGIE_ID', playerStatus : 'default'}
 // TODO how can i get this to check how many players are in the game?
-// could go further to validate that playerID refers to an existing User.ID
+// could go further to validate that playerId refers to an existing User.ID
 var validateGamePlayersObject = function (players) {
   var allGood = true;
   _.each(players, function (value, key) {
-    if (!value.playerID && value.playerStatus
+    if (!value.playerId && value.playerStatus
         && playerGameStatusUtils.validatePlayerStatus(value.playerStatus) ){
         allGood = false;
       console.log('validated player:' + key);
