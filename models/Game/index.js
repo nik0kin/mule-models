@@ -99,7 +99,9 @@ GameSchema.methods = {
 
   setWinnerAndSaveQ: function (winnerPlayerRel) {
     _.each(this.players, function (playerInfo, player) {
-      if (winnerPlayerRel === player) {
+      if (winnerPlayerRel === 'tie') {
+        playerInfo.playerStatus = 'tie';
+      } else if (winnerPlayerRel === player) {
         playerInfo.playerStatus = 'won';
       } else {
         playerInfo.playerStatus = 'lost';
