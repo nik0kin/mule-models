@@ -6,8 +6,7 @@
 var mongoose = global.getMongoose(),
   Schema = mongoose.Schema,
   Q = require('q'),
-  _ = require('lodash'),
-  winston = require('winston');
+  _ = require('lodash');
 
 var validateHelp = require('./validateHelper'),
   instanceMethodsHelp = require('./instanceMethodsHelper'),

@@ -1,8 +1,7 @@
 var mongoose = global.getMongoose(),
   Schema = mongoose.Schema,
   Q = require('q'),
-  _ = require('lodash'),
-  winston = require('winston');
+  _ = require('lodash');
 
 var ActionSchema = new Schema({
   type: {type: String},

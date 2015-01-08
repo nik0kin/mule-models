@@ -1,8 +1,7 @@
 var mongoose = global.getMongoose(),
   Schema = mongoose.Schema,
   Q = require('q'),
-  _ = require('lodash'),
-  winston = require('winston');
+  _ = require('lodash');
 
 var SpaceStateSchema = new Schema({
   id: { type: Number, index: true },

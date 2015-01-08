@@ -15,7 +15,6 @@
     "q": "~0.9.7",
     "async": "~0.2.9",
     "notifier": "~0.1.1",
-    "winston": "latest",
     "underscore": "latest"
   },
   "devDependencies": {

@@ -1,3 +1,4 @@
+//var Logger = require('mule-utils').logging;
 
 var mongoose = global.getMongoose();
 var Schema = mongoose.Schema;
@@ -22,13 +23,11 @@ var GameStateSchema = new Schema({
 /**
  * Methods
  */
-GameStateSchema.methods = {
-
-};
+GameStateSchema.methods = {};
 
 GameStateSchema.statics.findByIdWithPopulatedStatesQ = function (gameStateId) {
   var GameState = this;
-console.log('findByIdWithPopulatedStatesQ: '+ gameStateId);
+  //console.log('findByIdWithPopulatedStatesQ: '+ gameStateId);
   return GameState.findByIdQ(gameStateId)
     .then(function (gameState) {
       if (gameState) {

@@ -1,12 +1,11 @@
 /**
  * models/Game/instanceMethodsHelper.js
- *
- * Created by niko on 1/28/14.
  */
 
 var Q = require('q'),
-  _ = require('lodash'),
-  winston = require('winston');
+  _ = require('lodash');
+
+var Logger = require('mule-utils').logging;
 
 /*exports.addMethods = function(GameSchema, _this) {
  GameSchema.methods = ...
@@ -49,7 +48,8 @@ exports.joinGameQCallback = function () {
        };*/
 
       var successCallback = function (result) {
-        winston.info('player[' + player.username + '|' + player._id + '] added to game: ' + result._id + ' [' + result.playersCount + '/' + result.maxPlayers + ']');
+        Logger.log('player[' + player.username + '|' + player._id + '] added to game: '
+            + result._id + ' [' + result.playersCount + '/' + result.maxPlayers + ']', that._id);
         resolve(result);
       };
 

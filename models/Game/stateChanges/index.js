@@ -5,10 +5,10 @@
  */
 
 var Q = require('q'),
-  _ = require('lodash'),
-  winston = require('winston');
+  _ = require('lodash');
 
-var gameStatusUtils = require('mule-utils/gameStatusUtils');
+var gameStatusUtils = require('mule-utils/gameStatusUtils'),
+  Logger = require('mule-utils').logging;
 
 exports.changeStateQCallback = function () {
   return function (newState) {
@@ -22,7 +22,7 @@ exports.changeStateQCallback = function () {
 
       thisGame.gameStatus = newState;
 
-      winston.info('game[' + thisGame._id + '] State changed to ' + thisGame.gameStatus);
+      Logger.log('gameStatus changed to ' + thisGame.gameStatus, thisGame._id);
       resolve(thisGame);
     });
   };

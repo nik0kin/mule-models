@@ -16,3 +16,7 @@ module.exports = {
   PieceState: require('./models/PieceState'),
   SpaceState: require('./models/SpaceState')
 };
+
+module.exports.initLogger = function (initLoggerObj) {
+  require('mule-utils').logging.initWithLoggerObj(initLoggerObj);
+};
