@@ -1,14 +1,23 @@
 /**
  * test/dbHelper.js
  *
- * Created by niko on 1/28/14.
  */
 
 var Q = require('q');
 
-require ('../server.js');
+var Game,
+  User,
+  GameBoard,
+  History,
+  GameState,
+  PieceState,
+  SpaceState,
+  RuleBundle;
 
-var Game = require('../models/Game/index').Model,
+// required to be called before dbHelper can be used.
+exports.init = function () {
+  if (Game) return;
+  Game = require('../models/Game/index').Model,
   User = require('../models/User').Model,
   GameBoard = require('../models/GameBoard/index').Model,
   History = require('../models/History').Model,
@@ -16,7 +25,7 @@ var Game = require('../models/Game/index').Model,
   PieceState = require('../models/PieceState/index').Model,
   SpaceState = require('../models/SpaceState/index').Model,
   RuleBundle = require('../models/RuleBundle/index').Model;
-
+};
 
 var clearGamesCollectionsQ = function () {
   return Q.all([

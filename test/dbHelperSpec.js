@@ -8,6 +8,14 @@ var dbHelper = require('./dbHelper'),
   testHelper = require('mule-utils/lib/testUtils/mochaHelper');
 
 describe('dbHelper: ', function () {
+  before(function (done) {
+    require('../index').initDatabaseQ({db: 'mongodb://localhost/mule_test'})
+      .then(function () {
+        dbHelper.init();
+        done();
+      })
+  });
+
   var validCreateGamesBody = {
     "name": "fun game 3v3",
     "maxPlayers" : 6,

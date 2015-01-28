@@ -1,5 +1,5 @@
-require('mule-utils/mongooseUtils');
+var MuleModels = require('./index');
 
-var mongoose = global.getMongoose();
+MuleModels.initDatabaseQ({db: 'mongodb://localhost/mule_test'});
 
 // this file is for testing purposes TODO move it
