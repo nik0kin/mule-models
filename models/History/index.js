@@ -90,6 +90,9 @@ HistorySchema.methods = {
     if (this.turnSubmitStyle === 'roundRobin') {
       this.turns.push([]);
     }
+    if (this.turnSubmitStyle === 'playByMail') {
+      this.currentTurn = this.currentRound;
+    }
     return this.saveQ();
   },
 
