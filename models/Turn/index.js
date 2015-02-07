@@ -59,6 +59,8 @@ TurnSchema.statics.createOrAddQ = function (params) {
         turn = newTurn;
       }
 
+      params.singleTurn.dateSubmitted  = new Date();
+
       _.each(params.playerRel, function (playerRel) {
         turn.playerTurns[playerRel] = params.singleTurn;
       });
