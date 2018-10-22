@@ -24,7 +24,7 @@ var HistorySchema = new Schema({
         each turn has {meta: singleturn, p1: singleturn, p2: singleturn, p3: singleturn}
   */
   turns: []
-});
+}, {usePushEach: true});
 
 HistorySchema.statics.createQ = function (game, turnSubmitStyle) {
   var History = this;

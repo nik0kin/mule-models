@@ -1,6 +1,6 @@
 {
   "name": "mule-models",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "Mongoose Models for Mule",
   "main": "index.js",
   "directories": {
@@ -16,7 +16,7 @@
     "mongoose-q": "0.1.0",
     "notifier": "~0.1.1",
     "q": "~0.9.7",
-    "lodash": "~2.4.1"
+    "lodash": "4.17.10"
   },
   "devDependencies": {
     "mule-rules": "git+https://github.com/nik0kin/mule-rules.git#master",

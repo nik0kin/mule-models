@@ -6,19 +6,19 @@ var mongoose = global.getMongoose(),
 var ActionSchema = new Schema({
   type: {type: String},
   params: {type: Schema.Types.Mixed}
-});
+}, {usePushEach: true});
 
 var SingleTurnSchema = new Schema({
   dateSubmitted: {type: Date},
   actions: []
-});
+}, {usePushEach: true});
 
 var TurnSchema = new Schema({
   turnNumber: { type: Number, default: -1},
   gameId: {type: Schema.Types.ObjectId, ref: 'Game'},
   metaTurn: {type: Schema.Types.Mixed}, //SingleTurnSchema
   playerTurns: {type: Schema.Types.Mixed, default: {}} // {p1: //SingleTurnSchema, p2: SingleTurnSchema}
-});
+}, {usePushEach: true});
 
 TurnSchema.statics.createQ = function (params) {
   var Turn = this;

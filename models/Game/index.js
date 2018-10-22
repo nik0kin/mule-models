@@ -40,7 +40,7 @@ var GameSchema = new Schema({
     customBoardSettings : {type : Schema.Types.Mixed }
   }
 
-});
+}, {usePushEach: true});
 
 /**
  * Virtuals

@@ -22,7 +22,7 @@ var GameBoardSchema = new Schema({
 
   history: {type: String, ref: 'History'},
   gameState : {type: String, ref: 'GameState'}
-});
+}, {usePushEach: true});
 
 /**
  * Virtuals

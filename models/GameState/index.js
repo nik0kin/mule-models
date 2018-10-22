@@ -9,7 +9,7 @@ var GameStateSchema = new Schema({
 
   globalVariables: {type: Schema.Types.Mixed, default: {}},
   playerVariables: {type: Schema.Types.Mixed, default: {}}
-});
+}, {usePushEach: true});
 
 /**
  * Virtuals

@@ -11,7 +11,7 @@ var PieceStateSchema = new Schema({
 
   class: {type: String}, //classes listed at ruleBundle.rules.pieces
   attributes: {} // grab attributes from board[].attributes (remember these can change)
-});
+}, {usePushEach: true});
 
 exports.Schema = PieceStateSchema;
 exports.Model = mongoose.model('PieceState', PieceStateSchema);
