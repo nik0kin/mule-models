@@ -10,22 +10,21 @@
     "test": "grunt"
   },
   "dependencies": {
-    "mule-utils": "git+https://github.com/nik0kin/mule-utils.git#master",
-    
-    "mongoose": "~4.4",
+    "lodash": "4.17.10",
+    "mongoose": "^5.3.7",
     "mongoose-q": "0.1.0",
+    "mule-utils": "git+https://github.com/nik0kin/mule-utils.git#master",
     "notifier": "~0.1.1",
-    "q": "~0.9.7",
-    "lodash": "4.17.10"
+    "q": "~0.9.7"
   },
   "devDependencies": {
-    "mule-rules": "git+https://github.com/nik0kin/mule-rules.git#master",
-    "mocha": "*",
-    "should": "*",
-    "grunt-cli": "*",
-    "time-grunt": "*",
     "grunt": "~0.4.5",
-    "grunt-simple-mocha": "~0.4.0"
+    "grunt-cli": "*",
+    "grunt-simple-mocha": "~0.4.0",
+    "mocha": "*",
+    "mule-rules": "git+https://github.com/nik0kin/mule-rules.git#master",
+    "should": "*",
+    "time-grunt": "*"
   },
   "repository": {
     "type": "git",
