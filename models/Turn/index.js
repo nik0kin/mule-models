@@ -111,8 +111,8 @@ console.log(actionMetaData)
 
   getCanAdvancePlayByMailTurn: function (playerRels) {
     var canAdvance = true;
-    _.each(this.getPlayByMailPlayersTurnStatus(playerRels), function (value) {
-      if (_.isEmpty(value)) {
+    _.each(this.getPlayByMailPlayersTurnStatus(playerRels), function (status) {
+      if (!status) {
         canAdvance = false;
       }
     });
