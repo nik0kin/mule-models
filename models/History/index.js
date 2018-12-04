@@ -18,10 +18,10 @@ var HistorySchema = new Schema({
 
   /* if game.turnSubmitStyle === 'roundRobin'
         turns looks like: [['turn1id', 'turn2id', 'turn3id'],['turn4id', 'turn5id', 'turn6id']]
-        each turn has {meta: singleturn, p1: singleturn}
+        each turn has {metaTurn: {actions:[]}, playerTurns: {p1: {actions:[]}}}
      if game.turnSubmitStyle === 'playByMail'
         turns looks like: ['turn1id', 'turn2id']
-        each turn has {meta: singleturn, p1: singleturn, p2: singleturn, p3: singleturn}
+        each turn has {metaTurn: {actions:[]}, playerTurns: {p1: {actions:[]}, p2: {actions:[]}, p3: {actions:[]}}}
   */
   turns: []
 }, {usePushEach: true});

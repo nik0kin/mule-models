@@ -3,11 +3,11 @@
  *
  * Created by niko on 1/28/14.
  */
- 
+
 var MAX_GAMENAME_LENGTH = 75,
-  MIN_TIMER_LENGTH = 15, // seconds
+  MIN_TIMER_LENGTH = 10, // seconds
   MAX_TIMER_LENGTH = 7 * 24 * 60 * 60; // a week
- 
+
 var _ = require('lodash');
 
 var gameStatusUtils = require('mule-utils/gameStatusUtils'),
