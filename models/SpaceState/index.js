@@ -1,7 +1,5 @@
 var mongoose = global.getMongoose(),
-  Schema = mongoose.Schema,
-  Q = require('q'),
-  _ = require('lodash');
+  Schema = mongoose.Schema;
 
 var SpaceStateSchema = new Schema({
   id: { type: Number, index: true },
@@ -10,7 +8,7 @@ var SpaceStateSchema = new Schema({
   class: {type: String},
 
   attributes: {} // grab attributes from board[].attributes (remember these can change)
-}, {usePushEach: true});
+}, {usePushEach: true, minimize: false});
 
 exports.Schema = SpaceStateSchema;
 exports.Model = mongoose.model('SpaceState', SpaceStateSchema);

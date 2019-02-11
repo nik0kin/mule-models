@@ -1,7 +1,5 @@
 var mongoose = global.getMongoose(),
-  Schema = mongoose.Schema,
-  Q = require('q'),
-  _ = require('lodash');
+  Schema = mongoose.Schema;
 
 var PieceStateSchema = new Schema({
   id: { type: Number, index: true },
@@ -11,7 +9,7 @@ var PieceStateSchema = new Schema({
 
   class: {type: String}, //classes listed at ruleBundle.rules.pieces
   attributes: {} // grab attributes from board[].attributes (remember these can change)
-}, {usePushEach: true});
+}, {usePushEach: true, minimize: false});
 
 exports.Schema = PieceStateSchema;
 exports.Model = mongoose.model('PieceState', PieceStateSchema);
