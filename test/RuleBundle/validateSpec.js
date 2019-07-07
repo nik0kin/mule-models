@@ -13,12 +13,12 @@ var dbHelper = require('../dbHelper'),
   RuleBundleModel = require('../../models/RuleBundle/index').Model;
 
 
-var checkersRuleBundleJSON = require('mule-rules').getRuleBundleJSON('checkers'),
-  backgammonRuleBundleJSON = require('mule-rules').getRuleBundleJSON('backgammon'),
-  vikingsRuleBundleJSON = require('mule-rules').getRuleBundleJSON('vikings');
+// var checkersRuleBundleJSON = require('mule-rules').getRuleBundleJSON('checkers'),
+//   backgammonRuleBundleJSON = require('mule-rules').getRuleBundleJSON('backgammon'),
+//   vikingsRuleBundleJSON = require('mule-rules').getRuleBundleJSON('vikings');
 
 
-describe('Models: ', function () {
+xdescribe('Models: ', function () {
   describe('RuleBundle: ', function () {
     describe('validateSpec ', function () {
       after(function (done) { dbHelper.clearUsersAndGamesCollection(done); });

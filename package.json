@@ -1,6 +1,6 @@
 {
   "name": "mule-models",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "description": "Mongoose Models for Mule",
   "main": "index.js",
   "directories": {
@@ -14,7 +14,6 @@
     "mongoose": "^5.3.7",
     "mongoose-q": "0.1.0",
     "mule-utils": "git+https://github.com/nik0kin/mule-utils.git#master",
-    "notifier": "~0.1.1",
     "q": "~0.9.7"
   },
   "devDependencies": {
@@ -22,7 +21,6 @@
     "grunt-cli": "*",
     "grunt-simple-mocha": "~0.4.0",
     "mocha": "*",
-    "mule-rules": "git+https://github.com/nik0kin/mule-rules.git#master",
     "should": "*",
     "time-grunt": "*"
   },
