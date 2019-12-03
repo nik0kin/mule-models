@@ -10,8 +10,8 @@
     "test": "grunt"
   },
   "dependencies": {
-    "lodash": "4.17.15",
-    "mongoose": "^5.3.7",
+    "lodash": "^4.17.15",
+    "mongoose": "^5.7.13",
     "mongoose-q": "0.1.0",
     "mule-utils": "git+https://github.com/nik0kin/mule-utils.git#master",
     "q": "~0.9.7"
